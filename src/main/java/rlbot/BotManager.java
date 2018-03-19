@@ -18,7 +18,7 @@ public class BotManager {
 
     public void registerBot(final int index, final String botType) {
         if (initializedBots.containsKey(index)) {
-            throw new RuntimeException("There is already a bot running at index " + index);
+            return;
         }
 
         initializedBots.computeIfAbsent(index, (idx) -> {
@@ -58,7 +58,7 @@ public class BotManager {
             }
 
             try {
-                Thread.sleep(1000);
+                Thread.sleep(16);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

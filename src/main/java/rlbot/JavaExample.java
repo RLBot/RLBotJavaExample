@@ -1,5 +1,6 @@
 package rlbot;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import py4j.GatewayServer;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
  */
 public class JavaExample {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InvalidProtocolBufferException {
 
         // Scenario: you finished your bot and submitted it to a tournament. Your opponent hard-coded the same
         // as you, and the match can't start because of the conflict. Because of this line, you can ask the

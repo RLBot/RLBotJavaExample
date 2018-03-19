@@ -25,9 +25,14 @@ public class RLBotDll {
 
     public static void setControllerState(GameData.ControllerState controllerState, int playerIndex) {
         byte[] protoBytes = controllerState.toByteArray();
-        Memory ptr = new Memory(protoBytes.length);
-        ptr.write(0, protoBytes, 0, protoBytes.length);
-        UpdatePlayerInputProto(ptr.getPointer(0), protoBytes.length, playerIndex);
+        Memory memory = getMemory(protoBytes);
+        UpdatePlayerInputProto(memory, protoBytes.length, playerIndex);
+    }
+
+    private static Memory getMemory(byte[] protoBytes) {
+        final Memory mem = new Memory(protoBytes.length);
+        mem.write(0, protoBytes, 0, protoBytes.length);
+        return mem;
     }
 
 }
