@@ -1,4 +1,4 @@
-package rlbot;
+package rlbot.output;
 
 import rlbot.api.GameData;
 
@@ -85,7 +85,7 @@ public class ControlsOutput {
         return Math.max(-1, Math.min(1, value));
     }
 
-    GameData.ControllerState toControllerState() {
+    public GameData.ControllerState toControllerState() {
         return GameData.ControllerState.newBuilder()
                 .setThrottle(throttle)
                 .setSteer(steer)

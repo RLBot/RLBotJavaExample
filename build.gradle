@@ -14,10 +14,19 @@ repositories {
 mainClassName = 'rlbot.JavaExample'
 
 dependencies {
-    compile group: 'net.sf.py4j', name: 'py4j', version: '0.10.6'
-    compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
-    compile group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
-    compile group: 'com.google.protobuf', name: 'protobuf-java', version: '3.1.0'
-    compile 'com.github.RLBot:RLBotProtobuf:0.0.2'
-    runtime files('lib') // This is temporary until we can get more stuff in jcenter.
+    compile 'com.github.tarehart:RLBot:gradle-build-SNAPSHOT'
+    compile 'com.github.tarehart:RLBot:gradle-build-SNAPSHOT:python@zip'  // Fetch the python zip
+    runtime files('build/framework/RLBotFramework/dll') // This picks up the dll since it's in this directory. Doesn't work if you specify the dll by name.
 }
+
+def findFile(suffix) {
+    configurations.compile.filter { it.name.endsWith(suffix) }
+}
+
+task assemblePython(type: Copy) {
+    from zipTree(findFile('python.zip').singleFile)
+    into 'build/framework'
+}
+
+processResources.dependsOn assemblePython
+

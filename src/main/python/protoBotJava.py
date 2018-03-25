@@ -31,8 +31,8 @@ class ProtoJava(BaseIndependentAgent):
 
     def run_independently(self):
         self.init_py4j_stuff()
-        self.javaAgent.registerBot(self.index, self.name)
         self.javaAgent.startup()
+        self.javaAgent.registerBot(self.index, self.name)
         print()
 
     def get_extra_pids(self):
