@@ -1,5 +1,5 @@
-group 'RLBot'
-version '0.0.1'
+// This file controls gradle, which we are using to install and update the RLBot framework used by this example bot,
+// and also compile and run the java code used by this bot.
 
 apply plugin: 'java'
 apply plugin: 'application'
@@ -14,19 +14,39 @@ repositories {
 mainClassName = 'rlbot.JavaExample'
 
 dependencies {
-    compile 'com.github.tarehart:RLBot:gradle-build-SNAPSHOT'
-    compile 'com.github.tarehart:RLBot:gradle-build-SNAPSHOT:python@zip'  // Fetch the python zip
-    runtime files('build/framework/RLBotFramework/dll') // This picks up the dll since it's in this directory. Doesn't work if you specify the dll by name.
+    // Fetch the framework jar file
+    compile 'com.github.RLBot:RLBot:v4-SNAPSHOT'
+
+    // Fetch the framework zip file. This will automatically stay up-to-date with the latest changes in the v4 branch.
+    // This is useful for automatically getting fixes when the framework breaks due to Rocket League patches.
+    // For different behavior, e.g. freezing at a specific version of the framework, see https://jitpack.io/docs/
+    compile 'com.github.RLBot:RLBot:v4-SNAPSHOT:python@zip'
+
+    // This picks up the dll since it's in this directory. Doesn't work if you specify the dll by name.
+    runtime files('build/framework/RLBotFramework/dll')
 }
 
 def findFile(suffix) {
     configurations.compile.filter { it.name.endsWith(suffix) }
 }
 
-task assemblePython(type: Copy) {
+// Extracts the RLBot framework zip into a directory in ./build/framework so it can be used by the bot.
+task prepareFrameworkDirectory(type: Copy) {
     from zipTree(findFile('python.zip').singleFile)
     into 'build/framework'
 }
 
-processResources.dependsOn assemblePython
+// Uses pip (the python package manager) to install all the python packages needed for this bot, as defined
+// in requirements.txt.
+task pipInstallRequirements(type: Exec) {
+    commandLine "pip", "install", "-r", "requirements.txt"
+}
 
+// Installs or updates RLBot. Empty task for now. It still does stuff because it "dependsOn" tasks that do things.
+task updateRLBot
+updateRLBot.dependsOn pipInstallRequirements
+updateRLBot.dependsOn prepareFrameworkDirectory
+
+// Must prepare the framework directory before running pip because the requirements.txt file references another one
+// inside the framework directory.
+pipInstallRequirements.dependsOn prepareFrameworkDirectory

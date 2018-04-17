@@ -4,6 +4,8 @@ import rlbot.api.GameData;
 
 public class ControlsOutput {
 
+    public static final ControlsOutput NO_OUTPUT = new ControlsOutput();
+
     // 0 is straight, -1 is hard left, 1 is hard right.
     private float steer;
 

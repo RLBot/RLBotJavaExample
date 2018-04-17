@@ -43,10 +43,15 @@ public class SampleBot implements Bot {
 
     @Override
     public GameData.ControllerState processInput(GameData.GameTickPacket gameTickPacket) {
+        if (gameTickPacket.getPlayersCount() <= playerIndex) {
+            // return no output because the gameTickPacket does not have any info on our car (game hasn't started yet?)
+            return ControlsOutput.NO_OUTPUT.toControllerState();
+        }
         DataPacket dataPacket = new DataPacket(gameTickPacket, playerIndex);
         return processInput(dataPacket).toControllerState();
     }
 
     public void retire() {
+        System.out.println("Retiring sample bot " + playerIndex);
     }
 }
