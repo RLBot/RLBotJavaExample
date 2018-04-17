@@ -4,7 +4,8 @@ import rlbot.api.GameData;
 
 public class ControlsOutput {
 
-    public static final ControlsOutput NO_OUTPUT = new ControlsOutput();
+    // Slide to avoid sending zero bytes. TODO: remove this temporary hack once the framework can handle zero byte output.
+    public static final ControlsOutput NO_OUTPUT = new ControlsOutput().withSlide();
 
     // 0 is straight, -1 is hard left, 1 is hard right.
     private float steer;

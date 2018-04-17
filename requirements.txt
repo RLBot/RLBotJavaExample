@@ -1,2 +1,5 @@
 # Include everything the framework requires
 -r build/framework/requirements.txt
+
+# Used to allow python to send commands to java, e.g. start running the bot
+py4j
