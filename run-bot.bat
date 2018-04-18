@@ -4,3 +4,5 @@ cd /D "%~dp0"
 call ./gradlew.bat --no-daemon updateRLBot
 
 call ./gradlew.bat --no-daemon run
+
+pause
