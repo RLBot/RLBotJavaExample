@@ -8,19 +8,18 @@ sourceCompatibility = 1.8
 
 repositories {
     jcenter()
-    maven { url 'https://jitpack.io' }
 }
 
 mainClassName = 'rlbot.JavaExample'
 
 dependencies {
     // Fetch the framework jar file
-    compile 'com.github.RLBot:RLBot:v4-SNAPSHOT'
+    compile 'org.rlbot.commons:framework:0.0.1'
 
     // Fetch the framework zip file. This will automatically stay up-to-date with the latest changes in the v4 branch.
     // This is useful for automatically getting fixes when the framework breaks due to Rocket League patches.
     // For different behavior, e.g. freezing at a specific version of the framework, see https://jitpack.io/docs/
-    compile 'com.github.RLBot:RLBot:v4-SNAPSHOT:python@zip'
+    compile 'org.rlbot.commons:framework:0.0.1:python@zip'
 
     // This picks up the dll since it's in this directory. Doesn't work if you specify the dll by name.
     runtime files('build/framework/RLBotFramework/dll')

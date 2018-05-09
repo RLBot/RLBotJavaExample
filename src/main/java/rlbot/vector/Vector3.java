@@ -23,6 +23,11 @@ public class Vector3 {
         this(0, 0, 0);
     }
 
+    public static Vector3 fromFlatbuffer(rlbot.flat.Vector3 vec) {
+        // Invert the X value so that the axes make more sense.
+        return new Vector3(-vec.x(), vec.y(), vec.z());
+    }
+
     public Vector3 plus(Vector3 other) {
         return new Vector3(x + other.x, y + other.y, z + other.z);
     }

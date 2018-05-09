@@ -1,21 +1,18 @@
 package rlbot;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-import rlbot.manager.BotManager;
+import rlbot.manager.FlatBotManager;
 import rlbot.py.PythonInterface;
 import rlbot.py.PythonServer;
 import rlbot.util.PortReader;
-
-import java.net.URISyntaxException;
 
 /**
  * See JavaAgent.py for usage instructions
  */
 public class JavaExample {
 
-    public static void main(String[] args) throws InvalidProtocolBufferException, URISyntaxException {
+    public static void main(String[] args) {
 
-        BotManager botManager = new BotManager();
+        FlatBotManager botManager = new FlatBotManager();
         PythonInterface pythonInterface = new SamplePythonInterface(botManager);
         Integer port = PortReader.readPortFromFile("port.cfg");
         PythonServer pythonServer = new PythonServer(pythonInterface, port);

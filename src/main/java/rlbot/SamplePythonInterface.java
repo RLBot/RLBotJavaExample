@@ -1,19 +1,36 @@
 package rlbot;
 
-import rlbot.manager.BotManager;
-import rlbot.py.DefaultPythonInterface;
+import rlbot.manager.FlatBotManager;
+import rlbot.py.PythonInterface;
 
 /**
  * The public methods of this class will be called directly from the python component of the RLBot framework.
  */
-public class SamplePythonInterface extends DefaultPythonInterface {
+public class SamplePythonInterface implements PythonInterface {
 
-    public SamplePythonInterface(BotManager botManager) {
-        super(botManager);
+    private final FlatBotManager botManager;
+
+    public SamplePythonInterface(FlatBotManager botManager) {
+        this.botManager = botManager;
     }
 
-    @Override
-    protected Bot initBot(int index, String botType) {
+    protected FlatBot initBot(int index, String botType) {
         return new SampleBot(index);
+    }
+
+    public void ensureStarted() {
+        botManager.ensureStarted();
+    }
+
+    public void shutdown() {
+        botManager.shutDown();
+    }
+
+    public void ensureBotRegistered(final int index, final String botType, final int team) {
+        botManager.ensureBotRegistered(index, () -> initBot(index, botType));
+    }
+
+    public void retireBot(final int index) {
+        botManager.retireBot(index);
     }
 }

@@ -1,12 +1,12 @@
 package rlbot;
 
-import rlbot.api.GameData;
+import rlbot.flat.GameTickPacket;
 import rlbot.input.CarData;
 import rlbot.input.DataPacket;
 import rlbot.output.ControlsOutput;
 import rlbot.vector.Vector2;
 
-public class SampleBot implements Bot {
+public class SampleBot implements FlatBot {
 
     private final int playerIndex;
 
@@ -42,13 +42,12 @@ public class SampleBot implements Bot {
     }
 
     @Override
-    public GameData.ControllerState processInput(GameData.GameTickPacket gameTickPacket) {
-        if (gameTickPacket.getPlayersCount() <= playerIndex) {
-            // return no output because the gameTickPacket does not have any info on our car (game hasn't started yet?)
-            return ControlsOutput.NO_OUTPUT.toControllerState();
+    public ControllerState processInput(GameTickPacket packet) {
+        if (packet.playersLength() <= playerIndex || packet.ball() == null) {
+            return new ControlsOutput();
         }
-        DataPacket dataPacket = new DataPacket(gameTickPacket, playerIndex);
-        return processInput(dataPacket).toControllerState();
+        DataPacket dataPacket = new DataPacket(packet, playerIndex);
+        return processInput(dataPacket);
     }
 
     public void retire() {
