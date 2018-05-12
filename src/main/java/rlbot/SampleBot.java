@@ -1,5 +1,6 @@
 package rlbot;
 
+import rlbot.boost.BoostManager;
 import rlbot.flat.GameTickPacket;
 import rlbot.input.CarData;
 import rlbot.input.DataPacket;
@@ -46,6 +47,7 @@ public class SampleBot implements FlatBot {
         if (packet.playersLength() <= playerIndex || packet.ball() == null) {
             return new ControlsOutput();
         }
+        BoostManager.loadGameTickPacket(packet);
         DataPacket dataPacket = new DataPacket(packet, playerIndex);
         return processInput(dataPacket);
     }
