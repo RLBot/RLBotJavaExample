@@ -39,3 +39,18 @@ task updateRLBot {
     dependsOn 'createDllDirectory'
 }
 updateRLBot.dependsOn pipInstallRequirements
+
+applicationDistribution.exclude(dllDirectory)
+
+// You can run gradew.bat distZip to generate a zip file suitable for tournament submissions.
+// It will be generated in build/distributions
+distZip {
+    into ('python') {
+        from fileTree('src/main/python') {
+            exclude '__pycache__'
+        }
+    }
+    into (applicationName + '/bin') {
+        from fileTree('port.cfg')
+    }
+}
