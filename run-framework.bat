@@ -3,6 +3,6 @@ cd /D "%~dp0"
 
 call ./gradlew.bat --no-daemon updateRLBot
 
-python ./build/framework/runner.py
+python -c "from rlbot import runner; runner.main();"
 
 pause

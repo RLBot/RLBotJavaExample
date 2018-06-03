@@ -1,6 +1,6 @@
 package rlbot.boost;
 
-import rlbot.cpp.RLBotDll;
+import rlbot.cppinterop.RLBotDll;
 import rlbot.flat.BoostPadState;
 import rlbot.flat.FieldInfo;
 import rlbot.flat.GameTickPacket;

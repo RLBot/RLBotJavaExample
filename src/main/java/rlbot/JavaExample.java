@@ -1,8 +1,8 @@
 package rlbot;
 
-import rlbot.manager.FlatBotManager;
-import rlbot.py.PythonInterface;
-import rlbot.py.PythonServer;
+import rlbot.manager.BotManager;
+import rlbot.pyinterop.PythonInterface;
+import rlbot.pyinterop.PythonServer;
 import rlbot.util.PortReader;
 
 /**
@@ -12,7 +12,7 @@ public class JavaExample {
 
     public static void main(String[] args) {
 
-        FlatBotManager botManager = new FlatBotManager();
+        BotManager botManager = new BotManager();
         PythonInterface pythonInterface = new SamplePythonInterface(botManager);
         Integer port = PortReader.readPortFromFile("port.cfg");
         PythonServer pythonServer = new PythonServer(pythonInterface, port);

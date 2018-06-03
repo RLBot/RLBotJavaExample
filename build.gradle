@@ -12,40 +12,30 @@ repositories {
 
 mainClassName = 'rlbot.JavaExample'
 
+def dllDirectory = 'build/dll'
+
 dependencies {
     // Fetch the framework jar file
-    compile 'org.rlbot.commons:framework:0.0.1'
+    compile 'org.rlbot.commons:framework:0.0.+'
 
-    // Fetch the framework zip file. This will automatically stay up-to-date with the latest changes in the v4 branch.
-    // This is useful for automatically getting fixes when the framework breaks due to Rocket League patches.
-    // For different behavior, e.g. freezing at a specific version of the framework, see https://jitpack.io/docs/
-    compile 'org.rlbot.commons:framework:0.0.1:python@zip'
-
-    // This picks up the dll since it's in this directory. Doesn't work if you specify the dll by name.
-    runtime files('build/framework/RLBotFramework/dll')
-}
-
-def findFile(suffix) {
-    configurations.compile.filter { it.name.endsWith(suffix) }
-}
-
-// Extracts the RLBot framework zip into a directory in ./build/framework so it can be used by the bot.
-task prepareFrameworkDirectory(type: Copy) {
-    from zipTree(findFile('python.zip').singleFile)
-    into 'build/framework'
+    // This directory will be created and the interface dll copied into it at runtime.
+    // The end result is that the interface dll will be on the classpath.
+    runtime files(dllDirectory)
 }
 
 // Uses pip (the python package manager) to install all the python packages needed for this bot, as defined
 // in requirements.txt.
 task pipInstallRequirements(type: Exec) {
-    commandLine "pip", "install", "-r", "requirements.txt"
+    commandLine "python", "-m", "pip", "install", "-r", "requirements.txt", "--upgrade"
+}
+
+task createDllDirectory {
+    mkdir dllDirectory
 }
 
 // Installs or updates RLBot. Empty task for now. It still does stuff because it "dependsOn" tasks that do things.
-task updateRLBot
+task updateRLBot {
+    dependsOn 'pipInstallRequirements'
+    dependsOn 'createDllDirectory'
+}
 updateRLBot.dependsOn pipInstallRequirements
-updateRLBot.dependsOn prepareFrameworkDirectory
-
-// Must prepare the framework directory before running pip because the requirements.txt file references another one
-// inside the framework directory.
-pipInstallRequirements.dependsOn prepareFrameworkDirectory

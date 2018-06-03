@@ -7,7 +7,7 @@ import rlbot.input.DataPacket;
 import rlbot.output.ControlsOutput;
 import rlbot.vector.Vector2;
 
-public class SampleBot implements FlatBot {
+public class SampleBot implements Bot {
 
     private final int playerIndex;
 

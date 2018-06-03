@@ -1,7 +1,5 @@
 package rlbot.vector;
 
-import rlbot.api.GameData;
-
 public class Vector3 {
 
     public final double x;
@@ -14,18 +12,13 @@ public class Vector3 {
         this.z = z;
     }
 
-    public static Vector3 fromProto(GameData.Vector3 vec) {
+    public static Vector3 fromFlatbuffer(rlbot.flat.Vector3 vec) {
         // Invert the X value so that the axes make more sense.
-        return new Vector3(-vec.getX(), vec.getY(), vec.getZ());
+        return new Vector3(-vec.x(), vec.y(), vec.z());
     }
 
     public Vector3() {
         this(0, 0, 0);
-    }
-
-    public static Vector3 fromFlatbuffer(rlbot.flat.Vector3 vec) {
-        // Invert the X value so that the axes make more sense.
-        return new Vector3(-vec.x(), vec.y(), vec.z());
     }
 
     public Vector3 plus(Vector3 other) {
