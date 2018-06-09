@@ -23,10 +23,36 @@ dependencies {
     runtime files(dllDirectory)
 }
 
+task checkPipUpgradeSafety {
+    doLast {
+        new ByteArrayOutputStream().withStream { os ->
+            def exitValue = exec {
+                commandLine "python", "-c", "from rlbot.utils import public_utils; print(public_utils.is_safe_to_upgrade());"
+                standardOutput = os
+                ignoreExitValue = true
+            }.exitValue
+
+            // If the exit value is nonzero, the command  probably failed because rlbot is not installed at all.
+            ext.isSafe = exitValue != 0 || os.toString().trim() == "True"
+        }
+    }
+}
+
+
 // Uses pip (the python package manager) to install all the python packages needed for this bot, as defined
 // in requirements.txt.
-task pipInstallRequirements(type: Exec) {
-    commandLine "python", "-m", "pip", "install", "-r", "requirements.txt", "--upgrade"
+task pipInstallRequirements {
+    dependsOn 'checkPipUpgradeSafety'
+
+    doLast {
+        if (checkPipUpgradeSafety.isSafe) {
+            exec {
+                commandLine "python", "-m", "pip", "install", "-r", "requirements.txt", "--upgrade"
+            }
+        } else {
+            println 'Skipping upgrade attempt because files are in use.'
+        }
+    }
 }
 
 task createDllDirectory {
