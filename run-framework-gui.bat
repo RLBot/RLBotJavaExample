@@ -5,3 +5,5 @@ cd /D "%~dp0"
 python -m pip install rlbot==0.0.* --upgrade
 
 python -c "from rlbot.gui.qt_root import RLBotQTGui; RLBotQTGui.main();"
+
+pause
