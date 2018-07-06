@@ -12,14 +12,16 @@ repositories {
 
 mainClassName = 'rlbot.JavaExample'
 
+// This directory will be created and the interface dll copied into it at runtime.
+// The end result is that the interface dll will be available for loading.
 def dllDirectory = 'build/dll'
+applicationDefaultJvmArgs = ["-Djna.library.path=" + dllDirectory]
 
 dependencies {
     // Fetch the framework jar file
     compile 'org.rlbot.commons:framework:0.0.+'
 
-    // This directory will be created and the interface dll copied into it at runtime.
-    // The end result is that the interface dll will be on the classpath.
+    // This is makes it easy to find the dll when running in intellij, where JVM args don't get passed from gradle.
     runtime files(dllDirectory)
 }
 
