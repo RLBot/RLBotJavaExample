@@ -1,4 +1,4 @@
-package rlbot.vector;
+package rlbotexample.vector;
 
 public class Vector3 {
 
@@ -12,13 +12,18 @@ public class Vector3 {
         this.z = z;
     }
 
+    public Vector3() {
+        this(0, 0, 0);
+    }
+
     public static Vector3 fromFlatbuffer(rlbot.flat.Vector3 vec) {
         // Invert the X value so that the axes make more sense.
         return new Vector3(-vec.x(), vec.y(), vec.z());
     }
 
-    public Vector3() {
-        this(0, 0, 0);
+    public rlbot.vector.Vector3 toRlbotVector() {
+        // Invert the X value again so that rlbot sees the format it expects.
+        return new rlbot.vector.Vector3((float) -x, (float) y, (float) z);
     }
 
     public Vector3 plus(Vector3 other) {

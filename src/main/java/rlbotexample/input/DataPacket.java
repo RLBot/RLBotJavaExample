@@ -1,4 +1,4 @@
-package rlbot.input;
+package rlbotexample.input;
 
 import rlbot.flat.GameTickPacket;
 

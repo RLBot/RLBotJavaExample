@@ -1,5 +1,6 @@
-package rlbot;
+package rlbotexample;
 
+import rlbot.Bot;
 import rlbot.manager.BotManager;
 import rlbot.pyinterop.DefaultPythonInterface;
 

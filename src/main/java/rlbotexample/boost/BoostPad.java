@@ -1,6 +1,7 @@
-package rlbot.boost;
+package rlbotexample.boost;
 
-import rlbot.vector.Vector3;
+
+import rlbotexample.vector.Vector3;
 
 public class BoostPad {
 
