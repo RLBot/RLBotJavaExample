@@ -1,9 +1,9 @@
-package rlbot;
+package rlbotexample;
 
 import rlbot.manager.BotManager;
 import rlbot.pyinterop.PythonInterface;
 import rlbot.pyinterop.PythonServer;
-import rlbot.util.PortReader;
+import rlbotexample.util.PortReader;
 
 /**
  * See JavaAgent.py for usage instructions

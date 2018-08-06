@@ -1,11 +1,17 @@
-package rlbot;
+package rlbotexample;
 
-import rlbot.boost.BoostManager;
+import rlbot.Bot;
+import rlbot.ControllerState;
 import rlbot.flat.GameTickPacket;
-import rlbot.input.CarData;
-import rlbot.input.DataPacket;
-import rlbot.output.ControlsOutput;
-import rlbot.vector.Vector2;
+import rlbot.manager.BotLoopRenderer;
+import rlbot.render.Renderer;
+import rlbotexample.boost.BoostManager;
+import rlbotexample.input.CarData;
+import rlbotexample.input.DataPacket;
+import rlbotexample.output.ControlsOutput;
+import rlbotexample.vector.Vector2;
+
+import java.awt.*;
 
 public class SampleBot implements Bot {
 
@@ -29,6 +35,14 @@ public class SampleBot implements Bot {
             steer = -1;
         } else {
             steer = 1;
+        }
+
+        // Change this to true if you want to try the rendering feature!
+        if (false) {
+            Renderer renderer = BotLoopRenderer.forBotLoop(this);
+            renderer.drawLine3d(Color.BLUE, myCar.position.toRlbotVector(), input.ball.position.toRlbotVector());
+            renderer.drawString3d("It's me", Color.green, myCar.position.toRlbotVector(), 2, 2);
+            renderer.drawCenteredRectangle3d(Color.black, input.ball.position.toRlbotVector(), 20, 20, false);
         }
 
         return new ControlsOutput()

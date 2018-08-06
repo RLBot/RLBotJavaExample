@@ -1,8 +1,8 @@
-package rlbot.input;
+package rlbotexample.input;
 
 
 import rlbot.flat.BallInfo;
-import rlbot.vector.Vector3;
+import rlbotexample.vector.Vector3;
 
 public class BallData {
     public final Vector3 position;
