@@ -10,7 +10,7 @@ repositories {
     jcenter()
 }
 
-mainClassName = 'rlbot.JavaExample'
+mainClassName = 'rlbotexample.JavaExample'
 
 // This directory will be created and the interface dll copied into it at runtime.
 // The end result is that the interface dll will be available for loading.
