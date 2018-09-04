@@ -19,7 +19,7 @@ applicationDefaultJvmArgs = ["-Djna.library.path=" + dllDirectory]
 
 dependencies {
     // Fetch the framework jar file
-    compile 'org.rlbot.commons:framework:0.0.+'
+    compile 'org.rlbot.commons:framework:1.+'
 
     // This is makes it easy to find the dll when running in intellij, where JVM args don't get passed from gradle.
     runtime files(dllDirectory)
