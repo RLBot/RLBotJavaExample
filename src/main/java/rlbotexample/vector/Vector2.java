@@ -1,5 +1,11 @@
 package rlbotexample.vector;
 
+/**
+ * A vector that only knows about x and y components.
+ *
+ * This class is here for your convenience, it is NOT part of the framework. You can add to it as much
+ * as you want, or delete it.
+ */
 public class Vector2 {
 
     public final double x;
@@ -39,6 +45,9 @@ public class Vector2 {
         return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
     }
 
+    /**
+     * This is the length of the vector.
+     */
     public double magnitude() {
         return Math.sqrt(magnitudeSquared());
     }
@@ -63,6 +72,10 @@ public class Vector2 {
         return x == 0 && y == 0;
     }
 
+    /**
+     * The correction angle is how many radians you need to rotate this vector to make it line up with the "ideal"
+     * vector. This is very useful for deciding which direction to steer.
+     */
     public double correctionAngle(Vector2 ideal) {
         double currentRad = Math.atan2(y, x);
         double idealRad = Math.atan2(ideal.y, ideal.x);

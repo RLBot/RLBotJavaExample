@@ -9,6 +9,12 @@ import rlbotexample.vector.Vector3;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Information about where boost pads are located on the field and what status they have.
+ *
+ * This class is here for your convenience, it is NOT part of the framework. You can change it as much
+ * as you want, or delete it.
+ */
 public class BoostManager {
 
     private static final ArrayList<BoostPad> orderedBoosts = new ArrayList<>();

@@ -1,5 +1,12 @@
 package rlbotexample.vector;
 
+/**
+ * Utility for reading a network port out of a config file. We're expecting a file that has only one line
+ * that's just a number.
+ *
+ * This class is here for your convenience, it is NOT part of the framework. You can add to it as much
+ * as you want, or delete it.
+ */
 public class Vector3 {
 
     public final double x;
