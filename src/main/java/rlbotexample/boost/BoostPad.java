@@ -3,6 +3,12 @@ package rlbotexample.boost;
 
 import rlbotexample.vector.Vector3;
 
+/**
+ * Representation of one of the boost pads on the field.
+ *
+ * This class is here for your convenience, it is NOT part of the framework. You can change it as much
+ * as you want, or delete it.
+ */
 public class BoostPad {
 
     private final Vector3 location;
