@@ -44,8 +44,8 @@ public class CarData {
     public final float elapsedSeconds;
 
     public CarData(rlbot.flat.PlayerInfo playerInfo, float elapsedSeconds) {
-        this.position = Vector3.fromFlatbuffer(playerInfo.physics().location());
-        this.velocity = Vector3.fromFlatbuffer(playerInfo.physics().velocity());
+        this.position = new Vector3(playerInfo.physics().location());
+        this.velocity = new Vector3(playerInfo.physics().velocity());
         this.orientation = CarOrientation.fromFlatbuffer(playerInfo);
         this.boost = playerInfo.boost();
         this.isSupersonic = playerInfo.isSupersonic();
