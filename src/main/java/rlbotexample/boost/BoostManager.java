@@ -39,7 +39,7 @@ public class BoostManager {
 
             for (int i = 0; i < fieldInfo.boostPadsLength(); i++) {
                 rlbot.flat.BoostPad flatPad = fieldInfo.boostPads(i);
-                BoostPad ourPad = new BoostPad(Vector3.fromFlatbuffer(flatPad.location()), flatPad.isFullBoost());
+                BoostPad ourPad = new BoostPad(new Vector3(flatPad.location()), flatPad.isFullBoost());
                 orderedBoosts.add(ourPad);
                 if (ourPad.isFullBoost()) {
                     fullBoosts.add(ourPad);

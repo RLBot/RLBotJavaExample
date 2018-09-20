@@ -16,8 +16,8 @@ public class BallData {
     public final Vector3 spin;
 
     public BallData(final BallInfo ball) {
-        this.position = Vector3.fromFlatbuffer(ball.physics().location());
-        this.velocity = Vector3.fromFlatbuffer(ball.physics().velocity());
-        this.spin = Vector3.fromFlatbuffer(ball.physics().angularVelocity());
+        this.position = new Vector3(ball.physics().location());
+        this.velocity = new Vector3(ball.physics().velocity());
+        this.spin = new Vector3(ball.physics().angularVelocity());
     }
 }

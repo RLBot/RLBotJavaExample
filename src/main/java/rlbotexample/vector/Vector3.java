@@ -1,5 +1,7 @@
 package rlbotexample.vector;
 
+import com.google.flatbuffers.FlatBufferBuilder;
+
 /**
  * Utility for reading a network port out of a config file. We're expecting a file that has only one line
  * that's just a number.
@@ -7,30 +9,24 @@ package rlbotexample.vector;
  * This class is here for your convenience, it is NOT part of the framework. You can add to it as much
  * as you want, or delete it.
  */
-public class Vector3 {
-
-    public final double x;
-    public final double y;
-    public final double z;
+public class Vector3 extends rlbot.vector.Vector3 {
 
     public Vector3(double x, double y, double z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        super((float) x, (float) y, (float) z);
     }
 
     public Vector3() {
         this(0, 0, 0);
     }
 
-    public static Vector3 fromFlatbuffer(rlbot.flat.Vector3 vec) {
+    public Vector3(rlbot.flat.Vector3 vec) {
         // Invert the X value so that the axes make more sense.
-        return new Vector3(-vec.x(), vec.y(), vec.z());
+        this(-vec.x(), vec.y(), vec.z());
     }
 
-    public rlbot.vector.Vector3 toRlbotVector() {
+    public int toFlatbuffer(FlatBufferBuilder builder) {
         // Invert the X value again so that rlbot sees the format it expects.
-        return new rlbot.vector.Vector3((float) -x, (float) y, (float) z);
+        return rlbot.flat.Vector3.createVector3(builder, -x, y, z);
     }
 
     public Vector3 plus(Vector3 other) {
