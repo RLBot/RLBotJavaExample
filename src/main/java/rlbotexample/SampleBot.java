@@ -8,6 +8,9 @@ import rlbot.flat.QuickChatSelection;
 import rlbot.manager.BotLoopRenderer;
 import rlbot.render.Renderer;
 import rlbotexample.boost.BoostManager;
+import rlbotexample.dropshot.DropshotTile;
+import rlbotexample.dropshot.DropshotTileManager;
+import rlbotexample.dropshot.DropshotTileState;
 import rlbotexample.input.CarData;
 import rlbotexample.input.DataPacket;
 import rlbotexample.output.ControlsOutput;
@@ -71,6 +74,14 @@ public class SampleBot implements Bot {
                 myCar.position.plus(myCar.orientation.noseVector.scaled(300)));
 
         renderer.drawString3d(goLeft ? "left" : "right", Color.WHITE, myCar.position, 2, 2);
+
+        for (DropshotTile tile: DropshotTileManager.getTiles()) {
+            if (tile.getState() == DropshotTileState.DAMAGED) {
+                renderer.drawCenteredRectangle3d(Color.YELLOW, tile.getLocation(), 4, 4, true);
+            } else if (tile.getState() == DropshotTileState.DESTROYED) {
+                renderer.drawCenteredRectangle3d(Color.RED, tile.getLocation(), 4, 4, true);
+            }
+        }
     }
 
 
@@ -91,8 +102,9 @@ public class SampleBot implements Bot {
             return new ControlsOutput();
         }
 
-        // Update the boost manager with the latest data
+        // Update the boost manager and tile manager with the latest data
         BoostManager.loadGameTickPacket(packet);
+        DropshotTileManager.loadGameTickPacket(packet);
 
         // Translate the raw packet data (which is in an unpleasant format) into our custom DataPacket class.
         // The DataPacket might not include everything from GameTickPacket, so improve it if you need to!
