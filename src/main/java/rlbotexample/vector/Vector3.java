@@ -3,8 +3,7 @@ package rlbotexample.vector;
 import com.google.flatbuffers.FlatBufferBuilder;
 
 /**
- * Utility for reading a network port out of a config file. We're expecting a file that has only one line
- * that's just a number.
+ * A simple 3d vector class with the most essential operations.
  *
  * This class is here for your convenience, it is NOT part of the framework. You can add to it as much
  * as you want, or delete it.
