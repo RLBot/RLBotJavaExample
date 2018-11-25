@@ -3,7 +3,7 @@ package rlbotexample.dropshot;
 import java.util.Objects;
 
 /**
- * This class is used to convert a 2d point to a hex grid. Look here for more information:
+ * This class is used to convert a 2d point to a hex grid in the DropshotTileManager. Look here for more information:
  * https://www.redblobgames.com/grids/hexagons/
  *
  * This class is here for your convenience, it is NOT part of the framework. You can add to it as much

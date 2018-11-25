@@ -11,17 +11,17 @@ import rlbotexample.vector.Vector3;
  */
 public class DropshotTile {
 
-    public static final double TILE_WIDTH = 768;
-    public static final double TILE_SIZE = 443.405;
-    public static final double TILE_HEIGHT = 886.81;
+    public static final double TILE_SIZE = 443.405; // side length and length from center to side
+    public static final double TILE_WIDTH = 768; // length from side to opposite side
+    public static final double TILE_HEIGHT = 886.81; // length from corner to opposite corner
 
     private final Vector3 location;
-    private final int teamIndex;
+    private final int team;
     private DropshotTileState state;
 
     public DropshotTile(Vector3 location) {
         this.location = location;
-        this.teamIndex = location.y < 0 ? 0 : 1;
+        this.team = location.y < 0 ? 0 : 1;
     }
 
     public void setState(DropshotTileState state) {
@@ -36,7 +36,7 @@ public class DropshotTile {
         return state;
     }
 
-    public int getTeamIndex() {
-        return teamIndex;
+    public int getTeam() {
+        return team;
     }
 }
