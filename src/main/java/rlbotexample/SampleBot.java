@@ -82,6 +82,10 @@ public class SampleBot implements Bot {
                 renderer.drawCenteredRectangle3d(Color.RED, tile.getLocation(), 4, 4, true);
             }
         }
+
+        // Draw a rectangle on the tile that the car is on
+        DropshotTile tile = DropshotTileManager.pointToTile(myCar.position.flatten());
+        if (tile != null) renderer.drawCenteredRectangle3d(Color.green, tile.getLocation(), 8, 8, false);
     }
 
 

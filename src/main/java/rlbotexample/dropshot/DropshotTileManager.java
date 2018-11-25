@@ -16,7 +16,7 @@ import static rlbotexample.dropshot.DropshotTile.TILE_WIDTH;
 
 /**
  * Information about where dropshot tiles are located in the arena and what state they have. Can also convert a
- * vector2 point to a tile.
+ * vector2 point to a tile, which is useful for checking the state of the tile where the ball lands.
  *
  * This class is here for your convenience, it is NOT part of the framework. You can change it as much
  * as you want, or delete it.
@@ -72,7 +72,7 @@ public class DropshotTileManager {
     }
 
     /**
-     * Returns the DropshotTile under the point, or null of none is.
+     * Returns the tile under the point, or null if none is.
      */
     public static DropshotTile pointToTile(Vector2 point) {
         Hex hex = pointToHex(point);
