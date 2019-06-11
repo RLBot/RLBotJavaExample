@@ -15,15 +15,7 @@ mainClassName = 'rlbotexample.JavaExample'
 // This directory will be created and the interface dll copied into it at runtime.
 // The end result is that the interface dll will be available for loading.
 def dllDirectory = 'build/dll'
-
-applicationDefaultJvmArgs = ["-Djna.library.path=" + dllDirectory, "-Duser.dir=MY_WORKING_DIR"]
-
-// https://www.mkyong.com/gradle/gradle-application-plugin-app_home-in-applicationdefaultjvmargs/
-startScripts {
-    doLast {
-        windowsScript.text = windowsScript.text.replace('MY_WORKING_DIR', "%~dp0.")
-    }
-}
+applicationDefaultJvmArgs = ["-Djna.library.path=" + dllDirectory]
 
 dependencies {
     // Fetch the framework jar file
@@ -86,7 +78,13 @@ distZip {
             exclude '__pycache__'
         }
     }
-    into (applicationName + '/bin') {
-        from fileTree('port.cfg')
+}
+
+// This is the same as distZip, but not zipped. Handy for testing your tournament submission more rapidly.
+installDist {
+    into ('../python') {
+        from fileTree('src/main/python') {
+            exclude '__pycache__'
+        }
     }
 }
