@@ -13,7 +13,6 @@ https://youtu.be/mPfYqKe_KRs
 1. Make sure you've installed the Java 8 JDK or newer. Here's the [Java 8 JDK](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 1. Make sure you've [set the JAVA_HOME environment variable](https://javatutorial.net/set-java-home-windows-10).
 1. Download this repository
-1. Open Rocket League
 1. Double click on run-bot.bat and leave it running. It's supposed to stay
 open and it's OK if it says something like "75%".
 1. Double click on run-gui.bat
