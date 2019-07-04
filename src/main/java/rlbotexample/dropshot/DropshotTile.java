@@ -11,7 +11,7 @@ import rlbotexample.vector.Vector3;
  */
 public class DropshotTile {
 
-    public static final double TILE_SIZE = 443.405; // side length and length from center to side
+    public static final double TILE_SIZE = 443.405; // side length and length from center to corner
     public static final double TILE_WIDTH = 768; // length from side to opposite side
     public static final double TILE_HEIGHT = 886.81; // length from corner to opposite corner
 
