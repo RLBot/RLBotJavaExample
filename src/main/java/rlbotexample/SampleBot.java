@@ -3,17 +3,17 @@ package rlbotexample;
 import rlbot.Bot;
 import rlbot.ControllerState;
 import rlbot.cppinterop.RLBotDll;
+import rlbot.cppinterop.RLBotInterfaceException;
+import rlbot.flat.BallPrediction;
 import rlbot.flat.GameTickPacket;
 import rlbot.flat.QuickChatSelection;
 import rlbot.manager.BotLoopRenderer;
 import rlbot.render.Renderer;
 import rlbotexample.boost.BoostManager;
-import rlbotexample.dropshot.DropshotTile;
-import rlbotexample.dropshot.DropshotTileManager;
-import rlbotexample.dropshot.DropshotTileState;
 import rlbotexample.input.CarData;
 import rlbotexample.input.DataPacket;
 import rlbotexample.output.ControlsOutput;
+import rlbotexample.prediction.BallPredictionHelper;
 import rlbotexample.vector.Vector2;
 
 import java.awt.*;
@@ -75,17 +75,13 @@ public class SampleBot implements Bot {
 
         renderer.drawString3d(goLeft ? "left" : "right", Color.WHITE, myCar.position, 2, 2);
 
-        for (DropshotTile tile: DropshotTileManager.getTiles()) {
-            if (tile.getState() == DropshotTileState.DAMAGED) {
-                renderer.drawCenteredRectangle3d(Color.YELLOW, tile.getLocation(), 4, 4, true);
-            } else if (tile.getState() == DropshotTileState.DESTROYED) {
-                renderer.drawCenteredRectangle3d(Color.RED, tile.getLocation(), 4, 4, true);
-            }
+        try {
+            // Draw 3 seconds of ball prediction
+            BallPrediction ballPrediction = RLBotDll.getBallPrediction();
+            BallPredictionHelper.drawTillMoment(ballPrediction, myCar.elapsedSeconds + 3, Color.CYAN, renderer);
+        } catch (RLBotInterfaceException e) {
+            e.printStackTrace();
         }
-
-        // Draw a rectangle on the tile that the car is on
-        DropshotTile tile = DropshotTileManager.pointToTile(myCar.position.flatten());
-        if (tile != null) renderer.drawCenteredRectangle3d(Color.green, tile.getLocation(), 8, 8, false);
     }
 
 
@@ -108,7 +104,6 @@ public class SampleBot implements Bot {
 
         // Update the boost manager and tile manager with the latest data
         BoostManager.loadGameTickPacket(packet);
-        DropshotTileManager.loadGameTickPacket(packet);
 
         // Translate the raw packet data (which is in an unpleasant format) into our custom DataPacket class.
         // The DataPacket might not include everything from GameTickPacket, so improve it if you need to!
