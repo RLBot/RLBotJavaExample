@@ -15,5 +15,5 @@ in the whole match, even on opposite teams.
 Advanced:
 
 - It's fine to close and restart `.bat` while the framework is active.
-- If there is a port conflict, you can modify both copies of `port.cfg`
+- If there is a port conflict, you can modify the port in the bot's python file.
 to use a different one. There's one here and one in the bin folder.
