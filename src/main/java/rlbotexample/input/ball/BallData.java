@@ -1,4 +1,4 @@
-package rlbotexample.input;
+package rlbotexample.input.ball;
 
 
 import rlbot.flat.BallInfo;

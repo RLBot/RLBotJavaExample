@@ -1,6 +1,8 @@
 package rlbotexample.input;
 
 import rlbot.flat.GameTickPacket;
+import rlbotexample.input.ball.BallData;
+import rlbotexample.input.car.CarData;
 
 import java.util.ArrayList;
 import java.util.List;
