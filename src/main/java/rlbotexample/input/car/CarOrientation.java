@@ -1,4 +1,4 @@
-package rlbotexample.input;
+package rlbotexample.input.car;
 
 
 import rlbot.flat.PlayerInfo;

@@ -10,8 +10,8 @@ import rlbot.flat.QuickChatSelection;
 import rlbot.manager.BotLoopRenderer;
 import rlbot.render.Renderer;
 import rlbotexample.boost.BoostManager;
-import rlbotexample.input.CarData;
 import rlbotexample.input.DataPacket;
+import rlbotexample.input.car.CarData;
 import rlbotexample.output.ControlsOutput;
 import rlbotexample.prediction.BallPredictionHelper;
 import rlbotexample.vector.Vector2;
@@ -74,6 +74,12 @@ public class SampleBot implements Bot {
                 myCar.position.plus(myCar.orientation.noseVector.scaled(300)));
 
         renderer.drawString3d(goLeft ? "left" : "right", Color.WHITE, myCar.position, 2, 2);
+
+        if(input.ball.hasBeenTouched) {
+            float lastTouchTime = myCar.elapsedSeconds - input.ball.latestTouch.gameSeconds;
+            Color touchColor = input.ball.latestTouch.team == 0 ? Color.BLUE : Color.ORANGE;
+            renderer.drawString3d((int)lastTouchTime + "s", touchColor, input.ball.position, 2, 2);
+        }
 
         try {
             // Draw 3 seconds of ball prediction
