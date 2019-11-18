@@ -2,6 +2,7 @@ package rlbotexample;
 
 import rlbot.manager.BotManager;
 import rlbotexample.util.PortReader;
+import rlbotexample.vector.Vector2;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -18,12 +19,12 @@ import java.util.stream.Collectors;
  */
 public class JavaExample {
 
-    private static final Integer DEFAULT_PORT = 17357;
+    private static final int DEFAULT_PORT = 17357;
 
     public static void main(String[] args) {
 
         BotManager botManager = new BotManager();
-        Integer port = PortReader.readPortFromArgs(args).orElseGet(() -> {
+        int port = PortReader.readPortFromArgs(args).orElseGet(() -> {
             System.out.println("Could not read port from args, using default!");
             return DEFAULT_PORT;
         });

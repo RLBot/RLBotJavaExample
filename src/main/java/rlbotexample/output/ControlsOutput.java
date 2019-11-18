@@ -10,6 +10,9 @@ import rlbot.ControllerState;
  */
 public class ControlsOutput implements ControllerState {
 
+    // Single builder instance to avoid multiple object instantiation per game tick
+    private static final Builder BUILDER = new Builder();
+
     // 0 is straight, -1 is hard left, 1 is hard right.
     private float steer;
 
@@ -30,76 +33,97 @@ public class ControlsOutput implements ControllerState {
     private boolean slideDepressed;
     private boolean useItemDepressed;
 
-    public ControlsOutput() {
+    public ControlsOutput() { }
+
+    public static class Builder {
+
+        private ControlsOutput controlsOutput;
+
+        private Builder() {
+            reset();
+        }
+
+        private void reset() {
+            this.controlsOutput = new ControlsOutput();
+        }
+
+        public Builder withSteer(float steer) {
+            controlsOutput.steer = clamp(steer);
+            return this;
+        }
+
+        public Builder withPitch(float pitch) {
+            controlsOutput.pitch = clamp(pitch);
+            return this;
+        }
+
+        public Builder withYaw(float yaw) {
+            controlsOutput.yaw = clamp(yaw);
+            return this;
+        }
+
+        public Builder withRoll(float roll) {
+            controlsOutput.roll = clamp(roll);
+            return this;
+        }
+
+        public Builder withThrottle(float throttle) {
+            controlsOutput.throttle = clamp(throttle);
+            return this;
+        }
+
+        public Builder withJump(boolean jumpDepressed) {
+            controlsOutput.jumpDepressed = jumpDepressed;
+            return this;
+        }
+
+        public Builder withBoost(boolean boostDepressed) {
+            controlsOutput.boostDepressed = boostDepressed;
+            return this;
+        }
+
+        public Builder withSlide(boolean slideDepressed) {
+            controlsOutput.slideDepressed = slideDepressed;
+            return this;
+        }
+
+        public Builder withUseItem(boolean useItemDepressed) {
+            controlsOutput.useItemDepressed = useItemDepressed;
+            return this;
+        }
+
+        public Builder withJump() {
+            controlsOutput.jumpDepressed = true;
+            return this;
+        }
+
+        public Builder withBoost() {
+            controlsOutput.boostDepressed = true;
+            return this;
+        }
+
+        public Builder withSlide() {
+            controlsOutput.slideDepressed = true;
+            return this;
+        }
+
+        public Builder withUseItem() {
+            controlsOutput.useItemDepressed = true;
+            return this;
+        }
+
+        public ControlsOutput build() {
+            return controlsOutput;
+        }
+
+        private float clamp(float value) {
+            return Math.max(-1, Math.min(1, value));
+        }
     }
 
-    public ControlsOutput withSteer(float steer) {
-        this.steer = clamp(steer);
-        return this;
-    }
-
-    public ControlsOutput withPitch(float pitch) {
-        this.pitch = clamp(pitch);
-        return this;
-    }
-
-    public ControlsOutput withYaw(float yaw) {
-        this.yaw = clamp(yaw);
-        return this;
-    }
-
-    public ControlsOutput withRoll(float roll) {
-        this.roll = clamp(roll);
-        return this;
-    }
-
-    public ControlsOutput withThrottle(float throttle) {
-        this.throttle = clamp(throttle);
-        return this;
-    }
-
-    public ControlsOutput withJump(boolean jumpDepressed) {
-        this.jumpDepressed = jumpDepressed;
-        return this;
-    }
-
-    public ControlsOutput withBoost(boolean boostDepressed) {
-        this.boostDepressed = boostDepressed;
-        return this;
-    }
-
-    public ControlsOutput withSlide(boolean slideDepressed) {
-        this.slideDepressed = slideDepressed;
-        return this;
-    }
-
-    public ControlsOutput withUseItem(boolean useItemDepressed) {
-        this.useItemDepressed = useItemDepressed;
-        return this;
-    }
-
-    public ControlsOutput withJump() {
-        this.jumpDepressed = true;
-        return this;
-    }
-
-    public ControlsOutput withBoost() {
-        this.boostDepressed = true;
-        return this;
-    }
-
-    public ControlsOutput withSlide() {
-        this.slideDepressed = true;
-        return this;
-    }
-
-    public ControlsOutput withUseItem() {
-        this.useItemDepressed = true;
-        return this;
-    }
-
-    private float clamp(float value) {
-        return Math.max(-1, Math.min(1, value));
+    public static Builder builder() {
+        BUILDER.reset();
+        return BUILDER;
     }
 
     @Override
