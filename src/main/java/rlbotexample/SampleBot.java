@@ -122,6 +122,7 @@ public class SampleBot implements Bot {
         return controlsOutput;
     }
 
+    @Override
     public void retire() {
         System.out.println("Retiring sample bot " + playerIndex);
     }

@@ -10,6 +10,7 @@ public class SamplePythonInterface extends SocketServer {
         super(port, botManager);
     }
 
+    @Override
     protected Bot initBot(int index, String botType, int team) {
         return new SampleBot(index);
     }
