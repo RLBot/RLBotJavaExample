@@ -53,10 +53,9 @@ public class SampleBot implements Bot {
             RLBotDll.sendQuickChat(playerIndex, false, QuickChatSelection.Compliments_NiceOne);
         }
 
-        return ControlsOutput.builder()
+        return new ControlsOutput()
                 .withSteer(goLeft ? -1 : 1)
-                .withThrottle(1)
-                .build();
+                .withThrottle(1);
     }
 
     /**

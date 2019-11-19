@@ -31,6 +31,10 @@ public class JavaExample {
         SamplePythonInterface pythonInterface = new SamplePythonInterface(port, botManager);
         new Thread(pythonInterface::start).start();
 
+        displayWindow(botManager, port);
+    }
+    
+    private static void displayWindow(BotManager botManager, int port) {
         JFrame frame = new JFrame("Java Bot");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
