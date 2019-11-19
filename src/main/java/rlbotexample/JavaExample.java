@@ -2,7 +2,6 @@ package rlbotexample;
 
 import rlbot.manager.BotManager;
 import rlbotexample.util.PortReader;
-import rlbotexample.vector.Vector2;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
