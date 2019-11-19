@@ -99,4 +99,9 @@ public class Vector3 extends rlbot.vector.Vector3 {
         double tz = x * v.y - y * v.x;
         return new Vector3(tx, ty, tz);
     }
+
+    @Override
+    public String toString() {
+        return String.format("(%s, %s, %s)", x, y, z);
+    }
 }

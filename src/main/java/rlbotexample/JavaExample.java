@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
  */
 public class JavaExample {
 
-    private static final Integer DEFAULT_PORT = 17357;
+    private static final int DEFAULT_PORT = 17357;
 
     public static void main(String[] args) {
 
         BotManager botManager = new BotManager();
-        Integer port = PortReader.readPortFromArgs(args).orElseGet(() -> {
+        int port = PortReader.readPortFromArgs(args).orElseGet(() -> {
             System.out.println("Could not read port from args, using default!");
             return DEFAULT_PORT;
         });
@@ -31,6 +31,10 @@ public class JavaExample {
         SamplePythonInterface pythonInterface = new SamplePythonInterface(port, botManager);
         new Thread(pythonInterface::start).start();
 
+        displayWindow(botManager, port);
+    }
+    
+    private static void displayWindow(BotManager botManager, int port) {
         JFrame frame = new JFrame("Java Bot");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

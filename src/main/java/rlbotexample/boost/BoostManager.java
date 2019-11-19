@@ -8,6 +8,7 @@ import rlbotexample.vector.Vector3;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Information about where boost pads are located on the field and what status they have.
@@ -17,15 +18,15 @@ import java.util.ArrayList;
  */
 public class BoostManager {
 
-    private static final ArrayList<BoostPad> orderedBoosts = new ArrayList<>();
-    private static final ArrayList<BoostPad> fullBoosts = new ArrayList<>();
-    private static final ArrayList<BoostPad> smallBoosts = new ArrayList<>();
+    private static final List<BoostPad> orderedBoosts = new ArrayList<>();
+    private static final List<BoostPad> fullBoosts = new ArrayList<>();
+    private static final List<BoostPad> smallBoosts = new ArrayList<>();
 
-    public static ArrayList<BoostPad> getFullBoosts() {
+    public static List<BoostPad> getFullBoosts() {
         return fullBoosts;
     }
 
-    public static ArrayList<BoostPad> getSmallBoosts() {
+    public static List<BoostPad> getSmallBoosts() {
         return smallBoosts;
     }
 
