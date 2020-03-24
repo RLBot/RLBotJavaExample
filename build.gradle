@@ -19,54 +19,18 @@ applicationDefaultJvmArgs = ["-Djna.library.path=" + dllDirectory]
 
 dependencies {
     // Fetch the framework jar file
-    compile 'org.rlbot.commons:framework:1.+'
+    compile 'org.rlbot.commons:framework:2.+'
 
     // This is makes it easy to find the dll when running in intellij, where JVM args don't get passed from gradle.
     runtime files(dllDirectory)
 }
 
-task checkPipUpgradeSafety {
-    doLast {
-        new ByteArrayOutputStream().withStream { os ->
-            def exitValue = exec {
-                commandLine "python", "-c", "from rlbot.utils import public_utils; print(public_utils.is_safe_to_upgrade());"
-                standardOutput = os
-                ignoreExitValue = true
-            }.exitValue
-
-            // If the exit value is nonzero, the command  probably failed because rlbot is not installed at all.
-            ext.isSafe = exitValue != 0 || os.toString().trim() == "True"
-        }
-    }
-}
-
-
-// Uses pip (the python package manager) to install all the python packages needed for this bot, as defined
-// in requirements.txt.
-task pipInstallRequirements {
-    dependsOn 'checkPipUpgradeSafety'
-
-    doLast {
-        if (checkPipUpgradeSafety.isSafe) {
-            exec {
-                commandLine "python", "-m", "pip", "install", "-r", "requirements.txt", "--upgrade"
-            }
-        } else {
-            println 'Skipping upgrade attempt because files are in use.'
-        }
-    }
-}
 
 task createDllDirectory {
     mkdir dllDirectory
 }
 
-// Installs or updates RLBot. Empty task for now. It still does stuff because it "dependsOn" tasks that do things.
-task updateRLBot {
-    dependsOn 'pipInstallRequirements'
-    dependsOn 'createDllDirectory'
-}
-updateRLBot.dependsOn pipInstallRequirements
+run.dependsOn createDllDirectory
 
 applicationDistribution.exclude(dllDirectory)
 
