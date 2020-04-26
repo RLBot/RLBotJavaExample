@@ -8,12 +8,12 @@ package rlbotexample.vector;
  */
 public class Vector2 {
 
-    public final double x;
-    public final double y;
+    public final float x;
+    public final float y;
 
     public Vector2(double x, double y) {
-        this.x = x;
-        this.y = y;
+        this.x = (float) x;
+        this.y = (float) y;
     }
 
     public Vector2 plus(Vector2 other) {

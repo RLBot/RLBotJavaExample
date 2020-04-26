@@ -40,6 +40,72 @@ public class Vector3 extends rlbot.vector.Vector3 {
         return new Vector3(x * scale, y * scale, z * scale);
     }
 
+    public double dot(Vector3 other) {
+        return x * other.x + y * other.y + z * other.z;
+    }
+
+    public Vector3 add(Vector3 other) {
+        return new Vector3(x + other.x, y + other.y, z + other.z);
+    }
+
+    public Vector3 add(float other) {
+        return new Vector3(x + other, y + other, z + other);
+    }
+
+    public Vector3 add(Vector2 other, float z) {
+        return new Vector3(x + other.x, y + other.y, this.z + z);
+    }
+
+    public Vector3 add(float x, float y, float z) {
+        return new Vector3(this.x + x, this.y + y, this.z + z);
+    }
+
+    public Vector3 sub(Vector3 other) {
+        return new Vector3(x - other.x, y - other.y, z - other.z);
+    }
+
+    public Vector3 sub(float xS, float yS, float zS) {
+        return new Vector3(x - xS, y - yS, z - zS);
+    }
+
+    public Vector3 sub(float other) {
+        return new Vector3(x - other, y - other, z - other);
+    }
+
+    public Vector3 mul(double scale) {
+        return new Vector3(x * scale, y * scale, z * scale);
+    }
+
+    public Vector3 mul(Vector3 other) {
+        return new Vector3(x * other.x, y * other.y, z * other.z);
+    }
+
+    public Vector3 mul(float xS, float yS, float zS) {
+        return new Vector3(x * xS, y * yS, z * zS);
+    }
+
+
+    public Vector3 dot(Matrix3x3 o) {
+        float[] vA = new float[3];
+        for (int i = 0; i < 3; i++) {
+            vA[i] = 0;
+            for (int j = 0; j < 3; j++) {
+                vA[i] += this.get(j) * o.get(j, i);
+            }
+        }
+        return new Vector3(vA[0], vA[1], vA[2]);
+    }
+
+    public float get(int index) {
+        if (index == 0)
+            return x;
+        if (index == 1)
+            return y;
+        if (index == 2)
+            return z;
+        return 0;
+    }
+
     /**
      * If magnitude is negative, we will return a vector facing the opposite direction.
      */
@@ -49,6 +115,10 @@ public class Vector3 extends rlbot.vector.Vector3 {
         }
         double scaleRequired = magnitude / magnitude();
         return scaled(scaleRequired);
+    }
+
+    public Vector3 div(double scale) {
+        return new Vector3(x / scale, y / scale, z / scale);
     }
 
     public double distance(Vector3 other) {
@@ -73,11 +143,6 @@ public class Vector3 extends rlbot.vector.Vector3 {
         }
         return this.scaled(1 / magnitude());
     }
-
-    public double dotProduct(Vector3 other) {
-        return x * other.x + y * other.y + z * other.z;
-    }
-
     public boolean isZero() {
         return x == 0 && y == 0 && z == 0;
     }
@@ -89,7 +154,7 @@ public class Vector3 extends rlbot.vector.Vector3 {
     public double angle(Vector3 v) {
         double mag2 = magnitudeSquared();
         double vmag2 = v.magnitudeSquared();
-        double dot = dotProduct(v);
+        double dot = dot(v);
         return Math.acos(dot / Math.sqrt(mag2 * vmag2));
     }
 

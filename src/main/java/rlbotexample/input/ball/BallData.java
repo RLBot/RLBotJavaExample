@@ -2,6 +2,7 @@ package rlbotexample.input.ball;
 
 
 import rlbot.flat.BallInfo;
+import rlbot.flat.Physics;
 import rlbotexample.vector.Vector3;
 
 /**
@@ -23,5 +24,13 @@ public class BallData {
         this.spin = new Vector3(ball.physics().angularVelocity());
         this.hasBeenTouched = ball.latestTouch() != null;
         this.latestTouch = this.hasBeenTouched ? new BallTouch(ball.latestTouch()) : null;
+    }
+
+    public BallData(final Physics ballPhysics) {
+        this.position = new Vector3(ballPhysics.location());
+        this.velocity = new Vector3(ballPhysics.velocity());
+        this.spin = new Vector3(ballPhysics.angularVelocity());
+        this.hasBeenTouched = false;
+        this.latestTouch = null;
     }
 }
