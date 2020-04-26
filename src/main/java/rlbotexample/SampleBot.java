@@ -5,8 +5,6 @@ import java.awt.Color;
 import rlbot.Bot;
 import rlbot.ControllerState;
 import rlbot.cppinterop.RLBotDll;
-import rlbot.cppinterop.RLBotInterfaceException;
-import rlbot.flat.BallPrediction;
 import rlbot.flat.GameTickPacket;
 import rlbot.flat.QuickChatSelection;
 import rlbot.manager.BotLoopRenderer;
@@ -15,6 +13,7 @@ import rlbotexample.boost.BoostManager;
 import rlbotexample.input.DataPacket;
 import rlbotexample.input.car.CarData;
 import rlbotexample.output.Controls;
+import rlbotexample.prediction.BallPrediction;
 import rlbotexample.prediction.BallPredictionHelper;
 import rlbotexample.sequence.ControlStep;
 import rlbotexample.sequence.Sequence;
@@ -36,9 +35,9 @@ public class SampleBot implements Bot {
 	 */
 	private Controls processInput(DataPacket packet) {
 		if (this.activeSequence != null) {
-			if(this.activeSequence.done) {
+			if (this.activeSequence.done) {
 				this.activeSequence = null;
-			}else {
+			} else {
 				return this.activeSequence.tick(packet);
 			}
 		}
@@ -99,13 +98,8 @@ public class SampleBot implements Bot {
 			renderer.drawString3d((int) lastTouchTime + "s", touchColor, input.ball.position, 2, 2);
 		}
 
-		try {
-			// Draw 3 seconds of ball prediction
-			BallPrediction ballPrediction = RLBotDll.getBallPrediction();
-			BallPredictionHelper.drawTillMoment(ballPrediction, myCar.elapsedSeconds + 3, Color.CYAN, renderer);
-		} catch (RLBotInterfaceException e) {
-			e.printStackTrace();
-		}
+		// Draw 3 seconds of ball prediction
+		BallPredictionHelper.drawTillMoment(myCar.elapsedSeconds + 3, Color.CYAN, renderer);
 	}
 
 	@Override
@@ -129,6 +123,8 @@ public class SampleBot implements Bot {
 
 		// Update the boost manager and tile manager with the latest data
 		BoostManager.loadGameTickPacket(gameTickPacket);
+
+		BallPrediction.update();
 
 		// Translate the raw packet data (which is in an unpleasant format) into our
 		// custom DataPacket class.
