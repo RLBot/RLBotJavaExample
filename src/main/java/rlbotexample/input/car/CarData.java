@@ -1,6 +1,8 @@
 package rlbotexample.input.car;
 
 
+import rlbot.flat.Rotator;
+import rlbotexample.vector.Matrix3x3;
 import rlbotexample.vector.Vector3;
 
 /**
@@ -19,6 +21,8 @@ public class CarData {
 
     /** The orientation of the car */
     public final CarOrientation orientation;
+
+    public final Matrix3x3 matOrientation;
 
     /** Boost ranges from 0 to 100 */
     public final double boost;
@@ -52,5 +56,7 @@ public class CarData {
         this.team = playerInfo.team();
         this.hasWheelContact = playerInfo.hasWheelContact();
         this.elapsedSeconds = elapsedSeconds;
+        Rotator r = playerInfo.physics().rotation();
+        this.matOrientation = Matrix3x3.eulerToRotation(new Vector3(r.pitch(), r.yaw(), r.roll()));
     }
 }
