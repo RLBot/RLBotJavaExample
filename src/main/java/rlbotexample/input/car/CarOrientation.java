@@ -13,19 +13,19 @@ import rlbotexample.vector.Vector3;
 public class CarOrientation {
 
     /** The direction that the front of the car is facing */
-    public final Vector3 noseVector;
+    public final Vector3 forward;
 
     /** The direction the roof of the car is facing. (0, 0, 1) means the car is upright. */
-    public final Vector3 roofVector;
+    public final Vector3 up;
 
     /** The direction that the right side of the car is facing. */
-    public final Vector3 rightVector;
+    public final Vector3 right;
 
     public CarOrientation(Vector3 noseVector, Vector3 roofVector) {
 
-        this.noseVector = noseVector;
-        this.roofVector = roofVector;
-        this.rightVector = noseVector.crossProduct(roofVector);
+        this.forward = noseVector;
+        this.up = roofVector;
+        this.right = noseVector.cross(roofVector);
     }
 
     public static CarOrientation fromFlatbuffer(PlayerInfo playerInfo) {

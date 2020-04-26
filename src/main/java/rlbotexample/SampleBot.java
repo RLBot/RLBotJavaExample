@@ -21,6 +21,7 @@ import rlbotexample.sequence.ControlStep;
 import rlbotexample.sequence.Sequence;
 import rlbotexample.util.MathUtils;
 import rlbotexample.vector.Vector2;
+import rlbotexample.vector.Vector3;
 
 public class SampleBot implements Bot {
 
@@ -45,12 +46,11 @@ public class SampleBot implements Bot {
 			}
 		}
 
-		Vector2 ballPosition = packet.ball.position.flatten();
-		CarData myCar = packet.car;
-		Vector2 carPosition = myCar.position.flatten();
-		Vector2 carDirection = myCar.orientation.noseVector.flatten();
+		CarData car = packet.car;
+		Vector3 ballPosition = packet.ball.position;
+		Vector3 localBall = MathUtils.toLocal(car, ballPosition);
 
-		double carSpeed = myCar.velocity.magnitude();
+		double carSpeed = car.velocity.magnitude();
 		if (550 < carSpeed && carSpeed < 600) {
 			this.activeSequence = new Sequence(new ControlStep(0.05, new Controls().withJump()),
 					new ControlStep(0.05, new Controls()),
@@ -59,46 +59,43 @@ public class SampleBot implements Bot {
 			return this.activeSequence.tick(packet);
 		}
 
-		// Subtract the two positions to get a vector pointing from the car to the ball.
-		Vector2 carToBall = ballPosition.minus(carPosition);
-
 		// How far does the car need to rotate before it's pointing exactly at the ball?
-		double steerCorrectionRadians = carDirection.correctionAngle(carToBall);
+		double steerCorrectionRadians = Vector2.X.correctionAngle(localBall.flatten());
 
 		// This is optional!
-		drawDebugLines(packet, myCar);
+		drawDebugLines(packet, car);
 
 		// This is also optional!
 		if (packet.ball.position.z > 300) {
 			RLBotDll.sendQuickChat(playerIndex, false, QuickChatSelection.Compliments_NiceOne);
 		}
 
-		return new Controls().withSteer(MathUtils.clamp11((float) steerCorrectionRadians * -5)).withThrottle(1);
+		return new Controls().withSteer(MathUtils.clamp11((float) steerCorrectionRadians * 5)).withThrottle(1);
 	}
 
 	/**
 	 * This is a nice example of using the rendering feature.
 	 */
-	private void drawDebugLines(DataPacket packet, CarData myCar) {
+	private void drawDebugLines(DataPacket packet, CarData car) {
 		// Here's an example of rendering debug data on the screen.
 		Renderer renderer = BotLoopRenderer.forBotLoop(this);
 
 		// Draw a line from the car to the ball
-		renderer.drawLine3d(Color.LIGHT_GRAY, myCar.position, packet.ball.position);
+		renderer.drawLine3d(Color.LIGHT_GRAY, car.position, packet.ball.position);
 
 		// Draw a line that points out from the nose of the car.
-		renderer.drawLine3d(myCar.team == 0 ? Color.BLUE : Color.ORANGE,
-				myCar.position.plus(myCar.orientation.noseVector.scaled(150)),
-				myCar.position.plus(myCar.orientation.noseVector.scaled(300)));
+		renderer.drawLine3d(car.team == 0 ? Color.BLUE : Color.ORANGE,
+				car.position.plus(car.orientation.forward.scaled(150)),
+				car.position.plus(car.orientation.forward.scaled(300)));
 
 		if (packet.ball.hasBeenTouched) {
-			float lastTouchTime = myCar.elapsedSeconds - packet.ball.latestTouch.gameSeconds;
+			float lastTouchTime = car.elapsedSeconds - packet.ball.latestTouch.gameSeconds;
 			Color touchColor = packet.ball.latestTouch.team == 0 ? Color.BLUE : Color.ORANGE;
 			renderer.drawString3d((int) lastTouchTime + "s", touchColor, packet.ball.position, 2, 2);
 		}
 
 		// Draw 3 seconds of ball prediction
-		BallPredictionHelper.drawTillMoment(myCar.elapsedSeconds + 3, Color.CYAN, renderer);
+		BallPredictionHelper.drawTillMoment(car.elapsedSeconds + 3, Color.CYAN, renderer);
 
 		PositionSlice futureGoal = BallPredictionHelper.findFutureGoal();
 		if (futureGoal == null) {
