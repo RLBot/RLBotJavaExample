@@ -1,6 +1,7 @@
 package rlbotexample;
 
 import java.awt.Color;
+import java.awt.Point;
 
 import rlbot.Bot;
 import rlbot.ControllerState;
@@ -15,8 +16,10 @@ import rlbotexample.input.car.CarData;
 import rlbotexample.output.Controls;
 import rlbotexample.prediction.BallPrediction;
 import rlbotexample.prediction.BallPredictionHelper;
+import rlbotexample.prediction.slice.PositionSlice;
 import rlbotexample.sequence.ControlStep;
 import rlbotexample.sequence.Sequence;
+import rlbotexample.util.MathUtils;
 import rlbotexample.vector.Vector2;
 
 public class SampleBot implements Bot {
@@ -78,12 +81,12 @@ public class SampleBot implements Bot {
 	/**
 	 * This is a nice example of using the rendering feature.
 	 */
-	private void drawDebugLines(DataPacket input, CarData myCar, boolean goLeft) {
+	private void drawDebugLines(DataPacket packet, CarData myCar, boolean goLeft) {
 		// Here's an example of rendering debug data on the screen.
 		Renderer renderer = BotLoopRenderer.forBotLoop(this);
 
 		// Draw a line from the car to the ball
-		renderer.drawLine3d(Color.LIGHT_GRAY, myCar.position, input.ball.position);
+		renderer.drawLine3d(Color.LIGHT_GRAY, myCar.position, packet.ball.position);
 
 		// Draw a line that points out from the nose of the car.
 		renderer.drawLine3d(goLeft ? Color.BLUE : Color.RED,
@@ -92,14 +95,23 @@ public class SampleBot implements Bot {
 
 		renderer.drawString3d(goLeft ? "left" : "right", Color.WHITE, myCar.position, 2, 2);
 
-		if (input.ball.hasBeenTouched) {
-			float lastTouchTime = myCar.elapsedSeconds - input.ball.latestTouch.gameSeconds;
-			Color touchColor = input.ball.latestTouch.team == 0 ? Color.BLUE : Color.ORANGE;
-			renderer.drawString3d((int) lastTouchTime + "s", touchColor, input.ball.position, 2, 2);
+		if (packet.ball.hasBeenTouched) {
+			float lastTouchTime = myCar.elapsedSeconds - packet.ball.latestTouch.gameSeconds;
+			Color touchColor = packet.ball.latestTouch.team == 0 ? Color.BLUE : Color.ORANGE;
+			renderer.drawString3d((int) lastTouchTime + "s", touchColor, packet.ball.position, 2, 2);
 		}
 
 		// Draw 3 seconds of ball prediction
 		BallPredictionHelper.drawTillMoment(myCar.elapsedSeconds + 3, Color.CYAN, renderer);
+
+		PositionSlice futureGoal = BallPredictionHelper.findFutureGoal();
+		if (futureGoal == null) {
+			renderer.drawString2d("No future goal", Color.WHITE, new Point(20, 20), 2, 2);
+		} else {
+			renderer.drawString2d("Goal in "
+					+ MathUtils.round(futureGoal.getElapsedSeconds() - packet.elapsedSeconds, 2) + " seconds!",
+					Color.RED, new Point(20, 20), 2, 2);
+		}
 	}
 
 	@Override

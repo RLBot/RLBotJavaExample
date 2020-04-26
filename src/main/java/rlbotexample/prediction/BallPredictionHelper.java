@@ -3,6 +3,8 @@ package rlbotexample.prediction;
 import java.awt.Color;
 
 import rlbot.render.Renderer;
+import rlbotexample.prediction.slice.PhysicsSlice;
+import rlbotexample.prediction.slice.PositionSlice;
 import rlbotexample.vector.Vector3;
 
 /**
@@ -14,7 +16,7 @@ public class BallPredictionHelper {
 	public static void drawTillMoment(float gameSeconds, Color color, Renderer renderer) {
 		Vector3 previousPosition = null;
 		for (int i = 0; i < BallPrediction.MAX_SLICES; i += 4) {
-			Slice slice = BallPrediction.slices[i];
+			PhysicsSlice slice = BallPrediction.slices[i];
 			if (slice.getElapsedSeconds() > gameSeconds) {
 				break;
 			}
@@ -25,4 +27,14 @@ public class BallPredictionHelper {
 			previousPosition = position;
 		}
 	}
+
+	public static PositionSlice findFutureGoal() {
+		for (PhysicsSlice slice : BallPrediction.slices) {
+			if (Math.abs(slice.getPosition().y) > 5235) {
+				return new PositionSlice(slice.getPosition(), slice.getElapsedSeconds());
+			}
+		}
+		return null;
+	}
+
 }
