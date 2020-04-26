@@ -13,7 +13,7 @@ public class Matrix3x3 {
         System.arraycopy(other.data, 0, this.data, 0, data.length);
     }
 
-    
+
     public static Matrix3x3 identity() {
         Matrix3x3 mat = new Matrix3x3();
         mat.assign(0, 0, 1);
@@ -22,7 +22,7 @@ public class Matrix3x3 {
         return mat;
     }
 
-  
+
     public static Matrix3x3 antiSym( Vector3 w) {
         // http://mathworld.wolfram.com/AntisymmetricMatrix.html
 
@@ -38,7 +38,7 @@ public class Matrix3x3 {
         return mat;
     }
 
-   
+
     public static Matrix3x3 R3_basis(Vector3 n) {
         float sign = n.z >= 0f ? 1f : -1f;
         float a = -1f / (sign + n.z);
@@ -61,7 +61,7 @@ public class Matrix3x3 {
         return mat;
     }
 
- 
+
     public static Matrix3x3 axisToRotation(Vector3 omega) {
         float norm_omega = (float) omega.magnitude();
 
@@ -117,7 +117,7 @@ public class Matrix3x3 {
         return mat;
     }
 
-    
+
     public static Matrix3x3 from( Vector3 forward,  Vector3 up,  Vector3 left) {
         Matrix3x3 mat = new Matrix3x3();
 
@@ -136,14 +136,14 @@ public class Matrix3x3 {
         return mat;
     }
 
-    
+
     public static Matrix3x3 lookAt(Vector3 direction, Vector3 up) {
         if (up == null)
             up = new Vector3(0, 0, 1);
 
         Vector3 f = direction.normalized();
-        Vector3 u = f.crossProduct(up.crossProduct(f)).normalized();
-        Vector3 l = u.crossProduct(f).normalized();
+        Vector3 u = f.cross(up.cross(f)).normalized();
+        Vector3 l = u.cross(f).normalized();
 
         Matrix3x3 mat = new Matrix3x3();
         mat.assign(0, 0, f.x);
@@ -160,7 +160,7 @@ public class Matrix3x3 {
         return mat;
     }
 
-    
+
     public static Matrix3x3 roofTo(Vector3 up, Vector3 generalDirection) {
         Vector3 f = new Vector3();
 
@@ -174,8 +174,8 @@ public class Matrix3x3 {
 
         if (f.isZero())
             f = new Vector3(0, 0, -1);
-        Vector3 u = f.crossProduct(up.crossProduct(f)).normalized();
-        Vector3 l = u.crossProduct(f).normalized();
+        Vector3 u = f.cross(up.cross(f)).normalized();
+        Vector3 l = u.cross(f).normalized();
 
         Matrix3x3 mat = new Matrix3x3();
         mat.assign(0, 0, f.x);

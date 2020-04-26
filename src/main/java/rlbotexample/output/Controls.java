@@ -8,7 +8,7 @@ import rlbot.ControllerState;
  * This class is here for your convenience, it is NOT part of the framework. You can change it as much
  * as you want, or delete it.
  */
-public class ControlsOutput implements ControllerState {
+public class Controls implements ControllerState {
 
     // 0 is straight, -1 is hard left, 1 is hard right.
     private float steer;
@@ -30,76 +30,76 @@ public class ControlsOutput implements ControllerState {
     private boolean slideDepressed;
     private boolean useItemDepressed;
 
-    public ControlsOutput() {
+    public Controls() {
     }
 
-    public ControlsOutput withSteer(float steer) {
+    public Controls withSteer(double steer) {
         this.steer = clamp(steer);
         return this;
     }
 
-    public ControlsOutput withPitch(float pitch) {
+    public Controls withPitch(double pitch) {
         this.pitch = clamp(pitch);
         return this;
     }
 
-    public ControlsOutput withYaw(float yaw) {
+    public Controls withYaw(double yaw) {
         this.yaw = clamp(yaw);
         return this;
     }
 
-    public ControlsOutput withRoll(float roll) {
+    public Controls withRoll(double roll) {
         this.roll = clamp(roll);
         return this;
     }
 
-    public ControlsOutput withThrottle(float throttle) {
+    public Controls withThrottle(double throttle) {
         this.throttle = clamp(throttle);
         return this;
     }
 
-    public ControlsOutput withJump(boolean jumpDepressed) {
+    public Controls withJump(boolean jumpDepressed) {
         this.jumpDepressed = jumpDepressed;
         return this;
     }
 
-    public ControlsOutput withBoost(boolean boostDepressed) {
+    public Controls withBoost(boolean boostDepressed) {
         this.boostDepressed = boostDepressed;
         return this;
     }
 
-    public ControlsOutput withSlide(boolean slideDepressed) {
+    public Controls withSlide(boolean slideDepressed) {
         this.slideDepressed = slideDepressed;
         return this;
     }
 
-    public ControlsOutput withUseItem(boolean useItemDepressed) {
+    public Controls withUseItem(boolean useItemDepressed) {
         this.useItemDepressed = useItemDepressed;
         return this;
     }
 
-    public ControlsOutput withJump() {
+    public Controls withJump() {
         this.jumpDepressed = true;
         return this;
     }
 
-    public ControlsOutput withBoost() {
+    public Controls withBoost() {
         this.boostDepressed = true;
         return this;
     }
 
-    public ControlsOutput withSlide() {
+    public Controls withSlide() {
         this.slideDepressed = true;
         return this;
     }
 
-    public ControlsOutput withUseItem() {
+    public Controls withUseItem() {
         this.useItemDepressed = true;
         return this;
     }
 
-    private float clamp(float value) {
-        return Math.max(-1, Math.min(1, value));
+    private float clamp(double value) {
+        return Math.max(-1, Math.min(1, (float)value));
     }
 
     @Override

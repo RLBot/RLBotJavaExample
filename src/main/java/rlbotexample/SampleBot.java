@@ -1,10 +1,11 @@
 package rlbotexample;
 
+import java.awt.Color;
+import java.awt.Point;
+
 import rlbot.Bot;
 import rlbot.ControllerState;
 import rlbot.cppinterop.RLBotDll;
-import rlbot.cppinterop.RLBotInterfaceException;
-import rlbot.flat.BallPrediction;
 import rlbot.flat.GameTickPacket;
 import rlbot.flat.QuickChatSelection;
 import rlbot.manager.BotLoopRenderer;
@@ -12,117 +13,143 @@ import rlbot.render.Renderer;
 import rlbotexample.boost.BoostManager;
 import rlbotexample.input.DataPacket;
 import rlbotexample.input.car.CarData;
-import rlbotexample.output.ControlsOutput;
+import rlbotexample.manoeuvre.Dodge;
+import rlbotexample.manoeuvre.Manoeuvre;
+import rlbotexample.manoeuvre.Recovery;
+import rlbotexample.manoeuvre.sequence.ControlStep;
+import rlbotexample.manoeuvre.sequence.Sequence;
+import rlbotexample.output.Controls;
+import rlbotexample.prediction.BallPrediction;
 import rlbotexample.prediction.BallPredictionHelper;
+import rlbotexample.prediction.slice.PositionSlice;
+import rlbotexample.util.MathUtils;
 import rlbotexample.vector.Vector2;
-
-import java.awt.*;
+import rlbotexample.vector.Vector3;
 
 public class SampleBot implements Bot {
 
-    private final int playerIndex;
+	private final int playerIndex;
 
-    public SampleBot(int playerIndex) {
-        this.playerIndex = playerIndex;
-    }
+	private Manoeuvre manoeuvre;
 
-    /**
-     * This is where we keep the actual bot logic. This function shows how to chase the ball.
-     * Modify it to make your bot smarter!
-     */
-    private ControlsOutput processInput(DataPacket input) {
+	public SampleBot(int playerIndex) {
+		this.playerIndex = playerIndex;
+	}
 
-        Vector2 ballPosition = input.ball.position.flatten();
-        CarData myCar = input.car;
-        Vector2 carPosition = myCar.position.flatten();
-        Vector2 carDirection = myCar.orientation.noseVector.flatten();
+	/**
+	 * This is where we keep the actual bot logic. This function shows how to chase
+	 * the ball. Modify it to make your bot smarter!
+	 */
+	private Controls processInput(DataPacket packet) {
+		if (this.manoeuvre != null) {
+			if (this.manoeuvre.isFinished()) {
+				this.manoeuvre = null;
+			} else {
+				return this.manoeuvre.tick(packet);
+			}
+		}
 
-        // Subtract the two positions to get a vector pointing from the car to the ball.
-        Vector2 carToBall = ballPosition.minus(carPosition);
+		CarData car = packet.car;
+		Vector3 ballPosition = packet.ball.position;
+		Vector3 localBall = MathUtils.toLocal(car, ballPosition);
 
-        // How far does the car need to rotate before it's pointing exactly at the ball?
-        double steerCorrectionRadians = carDirection.correctionAngle(carToBall);
+		// How far does the car need to rotate before it's pointing exactly at the ball?
+		float angle = (float) Vector2.X.correctionAngle(localBall.flatten());
 
-        boolean goLeft = steerCorrectionRadians > 0;
+		if (car.hasWheelContact) {
+			double carSpeed = car.velocity.magnitude();
+			if (!car.isSupersonic && carSpeed > 1200 && car.boost < 10) {
+				this.manoeuvre = new Dodge(angle * 2);
+				return this.manoeuvre.tick(packet);
+			}
+		} else {
+			this.manoeuvre = new Recovery(packet.car);
+			return this.manoeuvre.tick(packet);
+		}
 
-        // This is optional!
-        drawDebugLines(input, myCar, goLeft);
+		// This is optional!
+		drawDebugLines(packet, car);
 
-        // This is also optional!
-        if (input.ball.position.z > 300) {
-            RLBotDll.sendQuickChat(playerIndex, false, QuickChatSelection.Compliments_NiceOne);
-        }
+		// This is also optional!
+		if (packet.ball.position.z > 300) {
+			RLBotDll.sendQuickChat(playerIndex, false, QuickChatSelection.Compliments_NiceOne);
+		}
 
-        return new ControlsOutput()
-                .withSteer(goLeft ? -1 : 1)
-                .withThrottle(1);
-    }
+		return new Controls().withSteer(MathUtils.clamp11(angle * 5)).withThrottle(1)
+				.withBoost(!car.isSupersonic && Math.abs(angle) < Math.toRadians(25));
+	}
 
-    /**
-     * This is a nice example of using the rendering feature.
-     */
-    private void drawDebugLines(DataPacket input, CarData myCar, boolean goLeft) {
-        // Here's an example of rendering debug data on the screen.
-        Renderer renderer = BotLoopRenderer.forBotLoop(this);
+	/**
+	 * This is a nice example of using the rendering feature.
+	 */
+	private void drawDebugLines(DataPacket packet, CarData car) {
+		// Here's an example of rendering debug data on the screen.
+		Renderer renderer = BotLoopRenderer.forBotLoop(this);
 
-        // Draw a line from the car to the ball
-        renderer.drawLine3d(Color.LIGHT_GRAY, myCar.position, input.ball.position);
+		// Draw a line from the car to the ball
+		renderer.drawLine3d(Color.LIGHT_GRAY, car.position, packet.ball.position);
 
-        // Draw a line that points out from the nose of the car.
-        renderer.drawLine3d(goLeft ? Color.BLUE : Color.RED,
-                myCar.position.plus(myCar.orientation.noseVector.scaled(150)),
-                myCar.position.plus(myCar.orientation.noseVector.scaled(300)));
+		// Draw a line that points out from the nose of the car.
+		renderer.drawLine3d(car.team == 0 ? Color.BLUE : Color.ORANGE,
+				car.position.plus(car.orientation.forward.scaled(150)),
+				car.position.plus(car.orientation.forward.scaled(300)));
 
-        renderer.drawString3d(goLeft ? "left" : "right", Color.WHITE, myCar.position, 2, 2);
+		if (packet.ball.hasBeenTouched) {
+			float lastTouchTime = car.elapsedSeconds - packet.ball.latestTouch.gameSeconds;
+			Color touchColor = packet.ball.latestTouch.team == 0 ? Color.BLUE : Color.ORANGE;
+			renderer.drawString3d((int) lastTouchTime + "s", touchColor, packet.ball.position, 2, 2);
+		}
 
-        if(input.ball.hasBeenTouched) {
-            float lastTouchTime = myCar.elapsedSeconds - input.ball.latestTouch.gameSeconds;
-            Color touchColor = input.ball.latestTouch.team == 0 ? Color.BLUE : Color.ORANGE;
-            renderer.drawString3d((int)lastTouchTime + "s", touchColor, input.ball.position, 2, 2);
-        }
+		// Draw 3 seconds of ball prediction
+		BallPredictionHelper.drawTillMoment(car.elapsedSeconds + 3, Color.CYAN, renderer);
 
-        try {
-            // Draw 3 seconds of ball prediction
-            BallPrediction ballPrediction = RLBotDll.getBallPrediction();
-            BallPredictionHelper.drawTillMoment(ballPrediction, myCar.elapsedSeconds + 3, Color.CYAN, renderer);
-        } catch (RLBotInterfaceException e) {
-            e.printStackTrace();
-        }
-    }
+		PositionSlice futureGoal = BallPredictionHelper.findFutureGoal();
+		if (futureGoal == null) {
+			renderer.drawString2d("No future goal", Color.WHITE, new Point(20, 20), 2, 2);
+		} else {
+			renderer.drawString2d("Goal in "
+					+ MathUtils.round(futureGoal.getElapsedSeconds() - packet.elapsedSeconds, 2) + " seconds!",
+					Color.RED, new Point(20, 20), 2, 2);
+		}
+	}
 
+	@Override
+	public int getIndex() {
+		return this.playerIndex;
+	}
 
-    @Override
-    public int getIndex() {
-        return this.playerIndex;
-    }
+	/**
+	 * This is the most important function. It will automatically get called by the
+	 * framework with fresh data every frame. Respond with appropriate controls!
+	 */
+	@Override
+	public ControllerState processInput(GameTickPacket gameTickPacket) {
 
-    /**
-     * This is the most important function. It will automatically get called by the framework with fresh data
-     * every frame. Respond with appropriate controls!
-     */
-    @Override
-    public ControllerState processInput(GameTickPacket packet) {
+		if (gameTickPacket.playersLength() <= playerIndex || gameTickPacket.ball() == null) {
+			// Just return immediately if something looks wrong with the data. This helps us
+			// avoid stack traces.
+			return new Controls();
+		}
 
-        if (packet.playersLength() <= playerIndex || packet.ball() == null || !packet.gameInfo().isRoundActive()) {
-            // Just return immediately if something looks wrong with the data. This helps us avoid stack traces.
-            return new ControlsOutput();
-        }
+		// Update the boost manager and tile manager with the latest data
+		BoostManager.loadGameTickPacket(gameTickPacket);
 
-        // Update the boost manager and tile manager with the latest data
-        BoostManager.loadGameTickPacket(packet);
+		BallPrediction.update();
 
-        // Translate the raw packet data (which is in an unpleasant format) into our custom DataPacket class.
-        // The DataPacket might not include everything from GameTickPacket, so improve it if you need to!
-        DataPacket dataPacket = new DataPacket(packet, playerIndex);
+		// Translate the raw packet data (which is in an unpleasant format) into our
+		// custom DataPacket class.
+		// The DataPacket might not include everything from GameTickPacket, so improve
+		// it if you need to!
+		DataPacket packet = new DataPacket(gameTickPacket, playerIndex);
 
-        // Do the actual logic using our dataPacket.
-        ControlsOutput controlsOutput = processInput(dataPacket);
+		// Do the actual logic using our dataPacket.
+		Controls controlsOutput = processInput(packet);
 
-        return controlsOutput;
-    }
+		return controlsOutput;
+	}
 
-    @Override
-    public void retire() {
-        System.out.println("Retiring sample bot " + playerIndex);
-    }
+	@Override
+	public void retire() {
+		System.out.println("Retiring sample bot " + playerIndex);
+	}
 }
