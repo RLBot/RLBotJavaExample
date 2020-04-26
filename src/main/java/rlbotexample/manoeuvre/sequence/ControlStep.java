@@ -1,4 +1,4 @@
-package rlbotexample.sequence;
+package rlbotexample.manoeuvre.sequence;
 
 import rlbotexample.input.DataPacket;
 import rlbotexample.output.Controls;

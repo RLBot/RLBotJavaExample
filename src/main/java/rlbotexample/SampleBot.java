@@ -13,12 +13,14 @@ import rlbot.render.Renderer;
 import rlbotexample.boost.BoostManager;
 import rlbotexample.input.DataPacket;
 import rlbotexample.input.car.CarData;
+import rlbotexample.manoeuvre.Dodge;
+import rlbotexample.manoeuvre.Manoeuvre;
+import rlbotexample.manoeuvre.sequence.ControlStep;
+import rlbotexample.manoeuvre.sequence.Sequence;
 import rlbotexample.output.Controls;
 import rlbotexample.prediction.BallPrediction;
 import rlbotexample.prediction.BallPredictionHelper;
 import rlbotexample.prediction.slice.PositionSlice;
-import rlbotexample.sequence.ControlStep;
-import rlbotexample.sequence.Sequence;
 import rlbotexample.util.MathUtils;
 import rlbotexample.vector.Vector2;
 import rlbotexample.vector.Vector3;
@@ -27,7 +29,7 @@ public class SampleBot implements Bot {
 
 	private final int playerIndex;
 
-	private Sequence activeSequence;
+	private Manoeuvre manoeuvre;
 
 	public SampleBot(int playerIndex) {
 		this.playerIndex = playerIndex;
@@ -38,11 +40,11 @@ public class SampleBot implements Bot {
 	 * the ball. Modify it to make your bot smarter!
 	 */
 	private Controls processInput(DataPacket packet) {
-		if (this.activeSequence != null) {
-			if (this.activeSequence.done) {
-				this.activeSequence = null;
+		if (this.manoeuvre != null) {
+			if (this.manoeuvre.isFinished()) {
+				this.manoeuvre = null;
 			} else {
-				return this.activeSequence.tick(packet);
+				return this.manoeuvre.tick(packet);
 			}
 		}
 
@@ -50,17 +52,14 @@ public class SampleBot implements Bot {
 		Vector3 ballPosition = packet.ball.position;
 		Vector3 localBall = MathUtils.toLocal(car, ballPosition);
 
-		double carSpeed = car.velocity.magnitude();
-		if (550 < carSpeed && carSpeed < 600) {
-			this.activeSequence = new Sequence(new ControlStep(0.05, new Controls().withJump()),
-					new ControlStep(0.05, new Controls()),
-					new ControlStep(0.2, new Controls().withJump().withPitch(-1)),
-					new ControlStep(0.8, new Controls()));
-			return this.activeSequence.tick(packet);
-		}
-
 		// How far does the car need to rotate before it's pointing exactly at the ball?
-		double steerCorrectionRadians = Vector2.X.correctionAngle(localBall.flatten());
+		float angle = (float) Vector2.X.correctionAngle(localBall.flatten());
+
+		double carSpeed = car.velocity.magnitude();
+		if (!car.isSupersonic && carSpeed > 1200 && car.boost < 10 && car.hasWheelContact) {
+			this.manoeuvre = new Dodge(angle * 2);
+			return this.manoeuvre.tick(packet);
+		}
 
 		// This is optional!
 		drawDebugLines(packet, car);
@@ -70,7 +69,8 @@ public class SampleBot implements Bot {
 			RLBotDll.sendQuickChat(playerIndex, false, QuickChatSelection.Compliments_NiceOne);
 		}
 
-		return new Controls().withSteer(MathUtils.clamp11((float) steerCorrectionRadians * 5)).withThrottle(1);
+		return new Controls().withSteer(MathUtils.clamp11(angle * 5)).withThrottle(1)
+				.withBoost(!car.isSupersonic && Math.abs(angle) < Math.toRadians(25));
 	}
 
 	/**
