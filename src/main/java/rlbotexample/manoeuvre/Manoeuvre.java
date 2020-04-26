@@ -14,8 +14,7 @@ public abstract class Manoeuvre {
 	}
 
 	public void setFinished(boolean finished) {
-		// A manoeuvre cannot be un-finished after it has already finished.
-		this.finished |= finished;
+		this.finished = finished;
 	}
 
 }

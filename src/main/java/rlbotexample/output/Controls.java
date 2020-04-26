@@ -33,27 +33,27 @@ public class Controls implements ControllerState {
     public Controls() {
     }
 
-    public Controls withSteer(float steer) {
+    public Controls withSteer(double steer) {
         this.steer = clamp(steer);
         return this;
     }
 
-    public Controls withPitch(float pitch) {
+    public Controls withPitch(double pitch) {
         this.pitch = clamp(pitch);
         return this;
     }
 
-    public Controls withYaw(float yaw) {
+    public Controls withYaw(double yaw) {
         this.yaw = clamp(yaw);
         return this;
     }
 
-    public Controls withRoll(float roll) {
+    public Controls withRoll(double roll) {
         this.roll = clamp(roll);
         return this;
     }
 
-    public Controls withThrottle(float throttle) {
+    public Controls withThrottle(double throttle) {
         this.throttle = clamp(throttle);
         return this;
     }
@@ -98,8 +98,8 @@ public class Controls implements ControllerState {
         return this;
     }
 
-    private float clamp(float value) {
-        return Math.max(-1, Math.min(1, value));
+    private float clamp(double value) {
+        return Math.max(-1, Math.min(1, (float)value));
     }
 
     @Override

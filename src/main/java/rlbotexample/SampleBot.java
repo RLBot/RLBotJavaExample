@@ -15,6 +15,7 @@ import rlbotexample.input.DataPacket;
 import rlbotexample.input.car.CarData;
 import rlbotexample.manoeuvre.Dodge;
 import rlbotexample.manoeuvre.Manoeuvre;
+import rlbotexample.manoeuvre.Recovery;
 import rlbotexample.manoeuvre.sequence.ControlStep;
 import rlbotexample.manoeuvre.sequence.Sequence;
 import rlbotexample.output.Controls;
@@ -55,9 +56,14 @@ public class SampleBot implements Bot {
 		// How far does the car need to rotate before it's pointing exactly at the ball?
 		float angle = (float) Vector2.X.correctionAngle(localBall.flatten());
 
-		double carSpeed = car.velocity.magnitude();
-		if (!car.isSupersonic && carSpeed > 1200 && car.boost < 10 && car.hasWheelContact) {
-			this.manoeuvre = new Dodge(angle * 2);
+		if (car.hasWheelContact) {
+			double carSpeed = car.velocity.magnitude();
+			if (!car.isSupersonic && carSpeed > 1200 && car.boost < 10) {
+				this.manoeuvre = new Dodge(angle * 2);
+				return this.manoeuvre.tick(packet);
+			}
+		} else {
+			this.manoeuvre = new Recovery(packet.car);
 			return this.manoeuvre.tick(packet);
 		}
 
@@ -119,8 +125,7 @@ public class SampleBot implements Bot {
 	@Override
 	public ControllerState processInput(GameTickPacket gameTickPacket) {
 
-		if (gameTickPacket.playersLength() <= playerIndex || gameTickPacket.ball() == null
-				|| !gameTickPacket.gameInfo().isRoundActive()) {
+		if (gameTickPacket.playersLength() <= playerIndex || gameTickPacket.ball() == null) {
 			// Just return immediately if something looks wrong with the data. This helps us
 			// avoid stack traces.
 			return new Controls();
