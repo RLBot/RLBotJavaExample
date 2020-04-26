@@ -26,15 +26,18 @@ public class DataPacket {
 
     /** The index of your player */
     public final int playerIndex;
+    
+    public final float elapsedSeconds;
 
     public DataPacket(GameTickPacket request, int playerIndex) {
+    	this.elapsedSeconds = request.gameInfo().secondsElapsed();
 
         this.playerIndex = playerIndex;
         this.ball = new BallData(request.ball());
 
         allCars = new ArrayList<>();
         for (int i = 0; i < request.playersLength(); i++) {
-            allCars.add(new CarData(request.players(i), request.gameInfo().secondsElapsed()));
+            allCars.add(new CarData(request.players(i), this.elapsedSeconds));
         }
 
         this.car = allCars.get(playerIndex);
