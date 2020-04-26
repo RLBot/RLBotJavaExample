@@ -65,23 +65,21 @@ public class SampleBot implements Bot {
 		// How far does the car need to rotate before it's pointing exactly at the ball?
 		double steerCorrectionRadians = carDirection.correctionAngle(carToBall);
 
-		boolean goLeft = steerCorrectionRadians > 0;
-
 		// This is optional!
-		drawDebugLines(packet, myCar, goLeft);
+		drawDebugLines(packet, myCar);
 
 		// This is also optional!
 		if (packet.ball.position.z > 300) {
 			RLBotDll.sendQuickChat(playerIndex, false, QuickChatSelection.Compliments_NiceOne);
 		}
 
-		return new Controls().withSteer(goLeft ? -1 : 1).withThrottle(1);
+		return new Controls().withSteer(MathUtils.clamp11((float) steerCorrectionRadians * -5)).withThrottle(1);
 	}
 
 	/**
 	 * This is a nice example of using the rendering feature.
 	 */
-	private void drawDebugLines(DataPacket packet, CarData myCar, boolean goLeft) {
+	private void drawDebugLines(DataPacket packet, CarData myCar) {
 		// Here's an example of rendering debug data on the screen.
 		Renderer renderer = BotLoopRenderer.forBotLoop(this);
 
@@ -89,11 +87,9 @@ public class SampleBot implements Bot {
 		renderer.drawLine3d(Color.LIGHT_GRAY, myCar.position, packet.ball.position);
 
 		// Draw a line that points out from the nose of the car.
-		renderer.drawLine3d(goLeft ? Color.BLUE : Color.RED,
+		renderer.drawLine3d(myCar.team == 0 ? Color.BLUE : Color.ORANGE,
 				myCar.position.plus(myCar.orientation.noseVector.scaled(150)),
 				myCar.position.plus(myCar.orientation.noseVector.scaled(300)));
-
-		renderer.drawString3d(goLeft ? "left" : "right", Color.WHITE, myCar.position, 2, 2);
 
 		if (packet.ball.hasBeenTouched) {
 			float lastTouchTime = myCar.elapsedSeconds - packet.ball.latestTouch.gameSeconds;
