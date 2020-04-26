@@ -35,8 +35,12 @@ public class SampleBot implements Bot {
 	 * the ball. Modify it to make your bot smarter!
 	 */
 	private Controls processInput(DataPacket packet) {
-		if (this.activeSequence != null && !this.activeSequence.done) {
-			return this.activeSequence.tick(packet);
+		if (this.activeSequence != null) {
+			if(this.activeSequence.done) {
+				this.activeSequence = null;
+			}else {
+				return this.activeSequence.tick(packet);
+			}
 		}
 
 		Vector2 ballPosition = packet.ball.position.flatten();
