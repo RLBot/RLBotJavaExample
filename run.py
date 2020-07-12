@@ -1,15 +1,5 @@
+import subprocess
 import sys
-
-# https://stackoverflow.com/a/51704613
-try:
-    from pip import main as pipmain
-except ImportError:
-    from pip._internal import main as pipmain
-
-# More pip changes breaking us.
-main_fn = pipmain
-if hasattr(pipmain, 'main'):
-    main_fn = pipmain.main
 
 DEFAULT_LOGGER = 'rlbot'
 
@@ -23,7 +13,8 @@ if __name__ == '__main__':
             logger.log(logging_utils.logging_level,
                        'Skipping upgrade check for now since it looks like you have no internet')
         elif public_utils.is_safe_to_upgrade():
-            main_fn(['install', '-r', 'requirements.txt', '--upgrade', '--upgrade-strategy=eager'])
+            subprocess.call([sys.executable, "-m", "pip", "install", '-r', 'requirements.txt'])
+            subprocess.call([sys.executable, "-m", "pip", "install", 'rlbot', '--upgrade'])
 
             # https://stackoverflow.com/a/44401013
             rlbots = [module for module in sys.modules if module.startswith('rlbot')]
@@ -31,17 +22,11 @@ if __name__ == '__main__':
                 sys.modules.pop(rlbot_module)
 
     except ImportError:
-        main_fn(['install', '-r', 'requirements.txt', '--upgrade', '--upgrade-strategy=eager'])
+        subprocess.call([sys.executable, "-m", "pip", "install", '-r', 'requirements.txt', '--upgrade', '--upgrade-strategy=eager'])
 
     try:
-        if len(sys.argv) > 1 and sys.argv[1] == 'gui':
-            from rlbot.gui.qt_root import RLBotQTGui
-
-            RLBotQTGui.main()
-        else:
-            from rlbot import runner
-
-            runner.main()
+        from rlbot import runner
+        runner.main()
     except Exception as e:
         print("Encountered exception: ", e)
         print("Press enter to close.")
